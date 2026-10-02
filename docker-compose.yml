@@ -1,0 +1,60 @@
+name: skillbridge-ai
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: skillbridge-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-skillbridge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-skillbridge}
+      POSTGRES_DB: ${POSTGRES_DB:-skillbridge}
+    ports:
+      # Host port defaults to 5433 to avoid clashing with a PostgreSQL that may
+      # already be running on 5432. Inside the network it is always 5432.
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-skillbridge} -d ${POSTGRES_DB:-skillbridge}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: skillbridge-backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Inside the compose network the database is reachable as `db`.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-skillbridge}:${POSTGRES_PASSWORD:-skillbridge}@db:5432/${POSTGRES_DB:-skillbridge}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      # Bind-mount source so uvicorn --reload picks up edits immediately.
+      - ./backend:/app
+      # Demo/seed data lives at the repo root and is shared read-only-ish.
+      - ./data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+volumes:
+  db_data:
+    name: skillbridge_db_data

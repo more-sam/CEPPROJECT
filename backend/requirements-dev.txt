@@ -1,0 +1,4 @@
+# Development / test dependencies. Not needed to run the API in production.
+-r requirements.txt
+
+pytest>=8.2,<9.0

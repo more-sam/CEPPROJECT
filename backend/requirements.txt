@@ -1,0 +1,32 @@
+# Runtime dependencies for the SkillBridge AI backend.
+# Pinned to ranges known-good on Python 3.12.
+
+# ---------- Web framework ----------
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+pydantic>=2.7,<3.0
+# >=2.3 is required for NoDecode (comma-separated env lists), used in core/config.py
+pydantic-settings>=2.4,<3.0
+python-multipart>=0.0.9
+email-validator>=2.1,<3.0
+
+# ---------- Database ----------
+SQLAlchemy>=2.0,<2.2
+alembic>=1.13,<2.0
+psycopg[binary]>=3.2,<4.0
+
+# ---------- Auth ----------
+PyJWT>=2.8,<3.0
+bcrypt>=4.1,<5.0
+
+# ---------- Resume parsing ----------
+PyMuPDF>=1.24,<2.0
+python-docx>=1.1,<2.0
+
+# ---------- NLP / semantic matching ----------
+scikit-learn>=1.5,<2.0
+numpy>=1.26,<3.0
+spacy>=3.7,<4.0
+
+# Outbound HTTP: optional LLM provider + health/test transport.
+httpx>=0.27,<1.0

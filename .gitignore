@@ -1,0 +1,43 @@
+# ---------- Secrets / environment ----------
+# Real .env files never get committed. .env.example is the template and IS tracked.
+.env
+.env.local
+.env.*.local
+!*.env.example
+
+# ---------- User-uploaded data (resumes contain personal information) ----------
+backend/uploads/
+backend/storage/
+data/uploads/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+htmlcov/
+.coverage
+
+# ---------- Node ----------
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+.vite/
+
+# ---------- Editors / OS ----------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------- Tooling scratch ----------
+.freebuff/
+*.log
