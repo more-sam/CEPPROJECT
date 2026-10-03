@@ -19,7 +19,7 @@ browser and against the real API — not estimated from reading the code.
 | Backend modules | 74 Python files, ~10,600 lines |
 | Frontend | 67 TS/TSX files, ~8,000 lines, 17 pages |
 | Skill taxonomy | **118 skills, 380 aliases, 13 categories** |
-| Opportunity data | **20 companies, 52 roles** (all labelled `sample-data`) |
+| Opportunity data | **23 companies, 58 roles** (all labelled `DEMO`, explicit statuses) |
 | Assessments | **7 skills × 10 questions = 70**, with explanations |
 | Tests | **144, all passing** |
 | Data + documentation | ~1,500 lines of JSON, 22 architecture decision records |

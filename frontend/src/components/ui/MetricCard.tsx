@@ -1,5 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 
+import { useCountUp } from '../../hooks/useCountUp'
+
 interface MetricCardProps {
   icon: LucideIcon
   label: string
@@ -8,10 +10,13 @@ interface MetricCardProps {
   hint?: string
 }
 
-/** One statistic in the dashboard header row. */
+/** One statistic in the dashboard header row. Counts up when it appears. */
 export function MetricCard({ icon: Icon, label, value, suffix = '', hint }: MetricCardProps) {
+  const animated = useCountUp(value, 900)
+  const display = Number.isInteger(value) ? Math.round(animated) : animated.toFixed(1)
+
   return (
-    <div className="sb-glass rounded-2xl p-4">
+    <div className="sb-glass sb-lift rounded-2xl p-4">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
           {label}
@@ -20,8 +25,8 @@ export function MetricCard({ icon: Icon, label, value, suffix = '', hint }: Metr
           <Icon className="h-4 w-4" />
         </span>
       </div>
-      <p className="mt-3 font-display text-2xl font-semibold text-white">
-        {typeof value === 'number' ? value.toFixed(Number.isInteger(value) ? 0 : 1) : value}
+      <p className="mt-3 font-display text-2xl font-semibold tabular-nums text-white">
+        {display}
         <span className="text-base text-slate-400">{suffix}</span>
       </p>
       {hint && <p className="mt-1 text-[11px] text-slate-500">{hint}</p>}

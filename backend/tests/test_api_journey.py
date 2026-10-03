@@ -46,11 +46,11 @@ def test_seed_created_the_expected_volume(client: TestClient, seeded: dict) -> N
     assert seeded["questions"] >= 70
 
 
-def test_seeded_jobs_are_labelled_as_sample_data(client: TestClient) -> None:
+def test_seeded_jobs_are_labelled_as_demo_data(client: TestClient) -> None:
     """Nothing may imply a seeded listing is a live vacancy."""
     page = client.get("/api/jobs?page_size=5").json()
     assert page["items"]
-    assert all(item["source"] == "sample-data" for item in page["items"])
+    assert all(item["source"] == "DEMO" for item in page["items"])
 
 
 def test_jobs_are_paginated(client: TestClient) -> None:

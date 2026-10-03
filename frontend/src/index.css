@@ -20,8 +20,14 @@
   --color-aqua-400: #22d3ee;
   --color-aqua-500: #06b6d4;
 
+  /* Plasma accent: hot magenta-violet used sparingly for highlights. */
+  --color-plasma-300: #f0abfc;
+  --color-plasma-400: #e879f9;
+  --color-plasma-500: #d946ef;
+
   --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Space Grotesk', ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
@@ -106,6 +112,64 @@
   }
 }
 
+/* Text shimmer: a highlight sweep across gradient-clipped text. */
+@keyframes sb-shimmer {
+  0% {
+    background-position: 120% center;
+  }
+  100% {
+    background-position: -20% center;
+  }
+}
+
+/* Slow aurora drift for the ambient backdrop. */
+@keyframes sb-aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(4%, -3%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-3%, 4%, 0) scale(0.95);
+  }
+}
+
+/* Twinkling starfield. */
+@keyframes sb-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* HUD bracket corner reveal on hover. */
+@keyframes sb-scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(400%);
+  }
+}
+
+/* Ticker row for the live stats band. */
+@keyframes sb-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgb(52 211 153 / 0.5);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 5px rgb(52 211 153 / 0);
+  }
+}
+
 @layer components {
   /* Frosted glass panel used for every floating surface. */
   .sb-glass {
@@ -187,5 +251,123 @@
 
   .sb-rise {
     animation: sb-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* -----------------------------------------------------------------
+     Futuristic utilities: shimmer text, HUD cards, scanlines, glow.
+     ----------------------------------------------------------------- */
+  .sb-shimmer-text {
+    background: linear-gradient(
+      100deg,
+      #e2e8f0 20%,
+      #a5b4fc 38%,
+      #22d3ee 50%,
+      #a5b4fc 62%,
+      #e2e8f0 80%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: sb-shimmer 5.5s linear infinite;
+  }
+
+  /* HUD panel: clipped corners + corner brackets drawn with gradients. */
+  .sb-hud {
+    position: relative;
+    clip-path: polygon(
+      0 14px,
+      14px 0,
+      100% 0,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      0 100%
+    );
+  }
+
+  .sb-hud::before,
+  .sb-hud::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    opacity: 0.65;
+    transition: opacity 0.25s ease;
+  }
+
+  .sb-hud::before {
+    top: 8px;
+    left: 8px;
+    border-top: 2px solid var(--color-aqua-400);
+    border-left: 2px solid var(--color-aqua-400);
+  }
+
+  .sb-hud::after {
+    right: 8px;
+    bottom: 8px;
+    border-right: 2px solid var(--color-brand-400);
+    border-bottom: 2px solid var(--color-brand-400);
+  }
+
+  .sb-hud:hover::before,
+  .sb-hud:hover::after {
+    opacity: 1;
+  }
+
+  /* Lift + glow on hover for interactive cards. */
+  .sb-lift {
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .sb-lift:hover {
+    transform: translateY(-4px);
+    border-color: rgb(129 140 248 / 0.35);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.08) inset,
+      0 24px 60px -28px rgb(99 102 241 / 0.55);
+  }
+
+  /* Subtle top scanline sweep on hover (decorative). */
+  .sb-scan {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sb-scan::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 28%;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(34 211 238 / 0.1),
+      transparent
+    );
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sb-scan:hover::after {
+    opacity: 1;
+    animation: sb-scanline 1.6s ease-in-out infinite;
+  }
+
+  /* Live status dot. */
+  .sb-live-dot {
+    animation: sb-pulse-dot 2s ease-in-out infinite;
+  }
+
+  /* Mono label used for HUD-style eyebrows. */
+  .sb-mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
 }

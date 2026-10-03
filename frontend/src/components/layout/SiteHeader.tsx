@@ -1,4 +1,3 @@
-import { Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { useAuth } from '../../store/authContext'

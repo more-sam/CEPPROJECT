@@ -320,9 +320,9 @@ is safe:
 docker compose exec backend python -m app.seed
 ```
 
-It loads the 118-skill taxonomy, 20 companies, 52 opportunities, 7 assessments
+It loads the 118-skill taxonomy, 23 companies, 58 opportunities, 7 assessments
 (70 questions) and the demo account. Every seeded opportunity is written with
-`source="sample-data"`, and the UI labels it as sample data so nothing implies a
+`source="DEMO"`, and the UI labels it as demo data so nothing implies a
 live vacancy.
 
 ### Restoring the demo account
@@ -504,8 +504,8 @@ to local reasoning mode — the assistant degrades, it never breaks.
 
 ## Known limitations
 
-1. **Opportunity data is sample data.** 52 fictional listings, labelled
-   `sample-data` in the API and in the UI. Nothing is scraped and no live job
+1. **Opportunity data is demo data.** 58 fictional listings, labelled
+   `DEMO` in the API and in the UI. Nothing is scraped and no live job
    board is contacted. `services/job_service.py` is structured so an authorised
    provider can be added behind the same interface.
 2. **No email verification or password reset.** There is no transactional email

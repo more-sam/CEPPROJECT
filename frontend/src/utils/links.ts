@@ -48,13 +48,16 @@ function normalizeUrl(raw: unknown): URL | null {
  * Return true when `value` is a safe external URL the app is willing to
  * render as a link.
  *
+ * A type predicate, so callers can assign the guarded value straight to an
+ * `href` (which rejects `string | null`) without a redundant fallback.
+ *
  * Rejects:
  * - empty / non-string values
  * - non-http schemes (javascript:, data:, file:, …)
  * - placeholder/example domains
  * - malformed URLs
  */
-export function isSafeExternalUrl(value: unknown): boolean {
+export function isSafeExternalUrl(value: unknown): value is string {
   const url = normalizeUrl(value)
   if (url == null) return false
   if (FORBIDDEN_SCHEMES.has(url.protocol)) return false

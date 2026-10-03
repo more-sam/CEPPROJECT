@@ -35,6 +35,19 @@ class AnalysisStatus(StrEnum):
     FAILED = "failed"
 
 
+class JobStatus(StrEnum):
+    """Application status of an opportunity.
+
+    `UNKNOWN` is the honest default: a row existing in the table says nothing
+    about whether applications are open (spec section 7).
+    """
+
+    OPEN = "open"
+    CLOSED = "closed"
+    EXPIRED = "expired"
+    UNKNOWN = "unknown"
+
+
 class SkillProficiency(StrEnum):
     """Self-reported level.
 

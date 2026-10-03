@@ -4,7 +4,7 @@ Running `python -m app.seed` repeatedly must be safe, so every step upserts on a
 natural key rather than blindly inserting.
 
 Data provenance is explicit: every seeded opportunity is written with
-`source="sample-data"` because these are fictional listings, and the UI surfaces
+`source="DEMO"` because these are fictional listings, and the UI surfaces
 that so nothing implies a live vacancy.
 """
 
@@ -33,7 +33,7 @@ from app.models.roadmap import Roadmap
 from app.models.skill import Skill, StudentSkill
 from app.models.user import User
 
-SAMPLE_SOURCE = "sample-data"
+SAMPLE_SOURCE = "DEMO"
 DEMO_SOURCE = "demo-profile"
 
 # The skills the demo student starts with, chosen so the seeded dataset produces
@@ -105,6 +105,8 @@ def seed_companies(db: Session, payload: dict) -> dict[str, Company]:
         row.website_url = entry.get("website_url")
         row.location = entry.get("location")
         row.logo_url = entry.get("logo_url")
+        # NULL when the seed entry has no industry label; never invented.
+        row.industry = entry.get("industry")
 
     db.commit()
     return existing
@@ -153,6 +155,12 @@ def seed_jobs(db: Session, payload: dict, skills: dict[str, Skill]) -> int:
             job.application_url = ""
         job.source = entry.get("source", SAMPLE_SOURCE)
         job.posted_at = posted
+        # Application status comes ONLY from the explicit seed entry. A missing
+        # status stays "unknown" — existence in the table does not prove that
+        # applications are open (spec section 7).
+        job.status = str(entry.get("status", "unknown"))
+        # Demo rows are never "verified": no real source has confirmed them.
+        job.last_verified_at = None
         job.expires_at = posted + timedelta(days=45)
         db.flush()
 

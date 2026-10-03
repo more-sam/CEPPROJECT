@@ -8,6 +8,30 @@ from app.main import app
 client = TestClient(app)
 
 
+def test_stats_reports_public_counts(client: TestClient, seeded: dict) -> None:
+    """The unauthenticated stats endpoint exposes non-negative platform counters."""
+    response = client.get("/api/stats")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "ok"
+    for key in ("jobs", "skills", "companies", "assessments"):
+        assert isinstance(body[key], int)
+        assert body[key] >= 0
+    # The seeded taxonomy must be reflected in the public counters.
+    assert body["skills"] >= seeded["skills"]
+    assert body["jobs"] >= seeded["jobs"]
+    assert body["companies"] >= seeded["companies"]
+    assert body["assessments"] >= seeded["assessments"]
+
+
+def test_stats_is_listed_in_the_openapi_schema() -> None:
+    response = client.get("/api/openapi.json")
+
+    assert response.status_code == 200
+    assert "/api/stats" in response.json()["paths"]
+
+
 def test_liveness_returns_ok() -> None:
     response = client.get("/api/health")
 

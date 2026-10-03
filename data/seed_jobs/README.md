@@ -11,6 +11,8 @@ Planned contents:
 - `seed_jobs.json` - companies, roles, descriptions, locations, employment
   types, required skills, application URLs and source attribution.
 
-Every seeded listing must carry `"source": "sample-data"` (or a real, permitted
-source) so the UI never implies the listing is live. The job service is designed
+Every seeded listing must carry `"source": "DEMO"` (or a real, permitted
+source) so the UI never implies the listing is live. Every listing must also
+carry an explicit `"status"` (`open` / `closed` / `expired` / `unknown`) — a
+row's existence never implies applications are open. The job service is designed
 so an authorised external API can be added later without changing the schema.

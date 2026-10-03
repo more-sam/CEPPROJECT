@@ -1,4 +1,4 @@
-import { LogOut } from 'lucide-react'
+import { LogOut, Search } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -44,6 +44,20 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         </span>
       </NavLink>
 
+      {/* Command palette trigger - ⌘K / Ctrl+K works too. */}
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new CustomEvent('sb:open-palette'))}
+        className="flex w-full items-center gap-2.5 rounded-xl border border-white/8 bg-white/4 px-3 py-2.5 text-left text-sm text-slate-500 transition hover:border-brand-400/30 hover:bg-white/7 hover:text-slate-300"
+        aria-label="Search or run a command (Command K)"
+      >
+        <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="flex-1">Search…</span>
+        <kbd className="sb-mono-label rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-slate-500">
+          ⌘K
+        </kbd>
+      </button>
+
       <nav aria-label="Main" className="flex-1 overflow-y-auto">
         <ul className="space-y-1">
           {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
@@ -52,9 +66,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                 to={to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                  `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-brand-500/15 text-white ring-1 ring-brand-400/25'
+                      ? 'bg-brand-500/15 text-white ring-1 ring-brand-400/25 shadow-[0_0_18px_-6px_rgb(99_102_241_/_0.6)]'
                       : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
                   }`
                 }

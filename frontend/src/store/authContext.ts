@@ -39,5 +39,3 @@ export function useAuth(): AuthContextValue {
 }
 
 export const UseAuth = useAuth
-
-export type { AuthStatus }

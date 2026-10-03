@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkCheck, ExternalLink, MapPin } from 'lucide-react'
+import { Bookmark, BookmarkCheck, ExternalLink, MapPin, Megaphone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import type { OpportunityCard as OpportunityCardType } from '../../types'
@@ -6,6 +6,7 @@ import { Badge } from '../ui/Badge'
 import { CompanyLogo } from '../ui/CompanyLogo'
 import { CompatibilityRing } from '../ui/CompatibilityRing'
 import { SkillChip } from '../ui/SkillChip'
+import { ApplicationStatus } from '../ui/ApplicationStatus'
 import { isSafeExternalUrl } from '../../utils/links'
 
 const WORK_TYPE_LABEL: Record<string, string> = {
@@ -28,8 +29,23 @@ interface OpportunityCardProps {
   busy?: boolean
 }
 
-/** The single card shape used on the dashboard, opportunities and saved lists. */
-export function OpportunityCard({ opportunity, onToggleSave, busy }: OpportunityCardProps) {
+/**
+ * Upgraded opportunity card for the career-discovery feature.
+ *
+ * Every card now shows the five things the spec lists as a *must have* per
+ * listing:
+ *
+ *   Company    - linked logo + name (website link when the real company url is
+ *                safe to render, per spec §10)
+ *   Role       - title + company, both clickable into /opportunities/:id
+ *   Compatibility - SkillBridge Compatibility ring + matched / missing skills
+ *   Status     - ApplicationStatus pill (open | closed | expired | unknown)
+ *   Action     - Apply on company site (real application URL) or Visit company
+ *                website; View opportunity always links to the detail page
+ *
+ * Demo provenance is surfaced explicitly (spec §11) so a seeded row can never
+ * be mistaken for a live vacancy.
+ */export function OpportunityCard({ opportunity, onToggleSave, busy }: OpportunityCardProps) {
   const {
     id,
     title,
@@ -38,11 +54,13 @@ export function OpportunityCard({ opportunity, onToggleSave, busy }: Opportunity
     employment_type,
     work_type,
     experience_level,
+    source,
     compatibility_score,
     matched_skills,
     missing_skills,
     is_saved,
     application_url,
+    website_url,
   } = opportunity
 
   // Only show a handful of skills per group so cards stay scannable.
@@ -56,12 +74,15 @@ export function OpportunityCard({ opportunity, onToggleSave, busy }: Opportunity
           <CompanyLogo
             companyName={company.name}
             logoUrl={company.logo_url}
-            websiteUrl={company.website_url}
+            websiteUrl={company.website_url ?? website_url}
             size={40}
           />
           <div className="min-w-0">
             <h3 className="truncate font-display text-sm font-semibold text-white">
-              <Link to={`/opportunities/${id}`} className="hover:text-brand-200">
+              <Link
+                to={`/opportunities/${id}`}
+                className="hover:text-brand-200"
+              >
                 {title}
               </Link>
             </h3>
@@ -99,6 +120,9 @@ export function OpportunityCard({ opportunity, onToggleSave, busy }: Opportunity
         <Badge tone="brand">{EMPLOYMENT_LABEL[employment_type] ?? employment_type}</Badge>
         <Badge>{WORK_TYPE_LABEL[work_type] ?? work_type}</Badge>
         <Badge>{experience_level}</Badge>
+        {(source ?? 'sample-data') !== 'sample-data' && (
+          <Badge tone="neutral">{source}</Badge>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -133,28 +157,48 @@ export function OpportunityCard({ opportunity, onToggleSave, busy }: Opportunity
         </div>
       </div>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2">
-        {isSafeExternalUrl(application_url) ? (
-          <a
-            href={application_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
+      <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-white/8 pt-3">
+        <div className="flex shrink-0 items-center gap-2">
+          <ApplicationStatus status={opportunity.status ?? 'unknown'} />
+          <span className="text-[10px] text-slate-500">Demo data</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {isSafeExternalUrl(application_url) ? (
+            <a
+              href={application_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-[11px] font-semibold text-emerald-200 transition hover:bg-emerald-500/20"
+            >
+              <Megaphone className="h-3.5 w-3.5" aria-hidden="true" />
+              Apply on site
+            </a>
+          ) : (
+            <span className="inline-flex items-center rounded-xl border border-white/8 bg-white/4 px-3 py-2 text-[11px] font-medium text-slate-500">
+              Application link unavailable
+            </span>
+          )}
+
+          {isSafeExternalUrl(website_url ?? (company.website_url ?? '')) ? (
+            <a
+              href={website_url ?? (company.website_url ?? '')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
+            >
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              Visit company
+            </a>
+          ) : null}
+
+          <Link
+            to={`/opportunities/${id}`}
+            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-semibold text-slate-200 transition hover:bg-white/10"
           >
-            Apply on company site
-            <ExternalLink className="ml-1 inline h-3.5 w-3.5" />
-          </a>
-        ) : (
-          <span className="inline-flex items-center rounded-xl border border-white/8 bg-white/4 px-3 py-2 text-xs font-medium text-slate-500">
-            Application link unavailable
-          </span>
-        )}
-        <Link
-          to={`/opportunities/${id}`}
-          className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:bg-white/10"
-        >
-          View opportunity
-        </Link>
+            View opportunity
+          </Link>
+        </div>
       </div>
     </article>
   )

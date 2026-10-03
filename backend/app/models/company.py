@@ -22,6 +22,8 @@ class Company(Base, TimestampMixin):
     logo_url: Mapped[str | None] = mapped_column(String(500))
     website_url: Mapped[str | None] = mapped_column(String(500))
     location: Mapped[str | None] = mapped_column(String(200))
+    # Free-text industry label (e.g. "EdTech"); NULL when not known.
+    industry: Mapped[str | None] = mapped_column(String(120))
 
     jobs: Mapped[list["Job"]] = relationship(
         back_populates="company", cascade="all, delete-orphan", passive_deletes=True

@@ -54,9 +54,19 @@ class Job(Base, TimestampMixin):
     search_text: Mapped[str] = mapped_column(Text, default="", nullable=False)
 
     application_url: Mapped[str] = mapped_column(String(500), default="", nullable=False)
-    # Provenance. Seeded rows always say "sample-data" so the UI never implies a
+    # Provenance. Seeded rows always say "DEMO" so the UI never implies a
     # listing is a live vacancy.
-    source: Mapped[str] = mapped_column(String(60), default="sample-data", nullable=False)
+    source: Mapped[str] = mapped_column(String(60), default="DEMO", nullable=False)
+
+    # Application status: open | closed | expired | unknown.
+    # "unknown" is the default because a stored row alone does not prove that
+    # applications are still being accepted (spec section 7).
+    status: Mapped[str] = mapped_column(
+        String(16), default="unknown", index=True, nullable=False
+    )
+    # When a real data source last confirmed this listing's status/fields.
+    # NULL for demo rows, which are never described as verified (spec section 16).
+    last_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     # Raw requirement text parsed into JobSkill rows at seed time.
     requirements_text: Mapped[str | None] = mapped_column(Text)

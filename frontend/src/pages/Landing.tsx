@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
+  Building2,
+  ClipboardCheck,
   Compass,
   FileText,
   Layers,
@@ -15,6 +18,8 @@ import { AiOrb } from '../components/ui/AiOrb'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { SkillBridgeLogo } from '../components/ui/SkillBridgeLogo'
 import { SiteHeader } from '../components/layout/SiteHeader'
+import { fetchPlatformStats, type PlatformStats } from '../services/health'
+import { useCountUp } from '../hooks/useCountUp'
 
 const FEATURES = [
   {
@@ -48,6 +53,69 @@ const PATHWAY = [
   { icon: TrendingUp, label: 'Opportunities' },
 ]
 
+/** Live platform counters, fetched from the public /api/stats endpoint. */
+function StatsBand() {
+  const [stats, setStats] = useState<PlatformStats | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchPlatformStats()
+      .then((data) => {
+        if (!cancelled && data.status === 'ok') setStats(data)
+      })
+      .catch(() => {
+        /* stats are decorative - the band simply stays hidden */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!stats) return null
+
+  const items = [
+    { icon: Layers, value: stats.skills ?? 0, label: 'Skills mapped' },
+    { icon: Target, value: stats.jobs ?? 0, label: 'Live opportunities' },
+    { icon: Building2, value: stats.companies ?? 0, label: 'Hiring companies' },
+    { icon: ClipboardCheck, value: stats.assessments ?? 0, label: 'Skill assessments' },
+  ]
+
+  return (
+    <section className="pb-16" aria-label="Platform statistics">
+      <GlassPanel className="sb-hud sb-scan grid grid-cols-2 gap-6 px-6 py-6 sm:grid-cols-4">
+        {items.map(({ icon: Icon, value, label }) => (
+          <StatItem key={label} icon={Icon} value={value} label={label} />
+        ))}
+      </GlassPanel>
+    </section>
+  )
+}
+
+function StatItem({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: typeof Layers
+  value: number
+  label: string
+}) {
+  const animated = useCountUp(value, 1100)
+  return (
+    <div className="flex items-center gap-3">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-aqua-400/10 text-aqua-400 ring-1 ring-aqua-400/20">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="font-display text-xl font-semibold tabular-nums text-white sm:text-2xl">
+          {Math.round(animated).toLocaleString()}
+        </p>
+        <p className="sb-mono-label text-slate-500">{label}</p>
+      </div>
+    </div>
+  )
+}
+
 export default function Landing() {
   return (
     <div className="relative min-h-dvh">
@@ -57,13 +125,15 @@ export default function Landing() {
         {/* ---------------- Hero ---------------- */}
         <section className="grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
           <div className="sb-rise">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-brand-300">
-              <Sparkles className="h-3.5 w-3.5" />
+            <p className="sb-mono-label mt-6 flex items-center gap-2 text-aqua-400/80">
+              <span className="sb-live-dot inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
               Career intelligence for students and graduates
-            </span>
+            </p>
 
-            <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              Bridge the gap between your skills and real opportunities.
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+              <span className="sb-shimmer-text">
+                Bridge the gap between your skills and real opportunities.
+              </span>
             </h1>
 
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
@@ -101,6 +171,9 @@ export default function Landing() {
             </div>
           </div>
         </section>
+
+        {/* ---------------- Live platform stats ---------------- */}
+        <StatsBand />
 
         {/* ---------------- Compatibility example ---------------- */}
         <section className="grid gap-6 pb-16 lg:grid-cols-2 lg:items-center">
@@ -172,7 +245,7 @@ export default function Landing() {
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map(({ icon: Icon, title, body }) => (
-              <GlassPanel key={title} className="flex flex-col gap-3 p-5">
+              <GlassPanel key={title} className="sb-hud sb-lift flex flex-col gap-3 p-5">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/20">
                   <Icon className="h-4 w-4" />
                 </span>

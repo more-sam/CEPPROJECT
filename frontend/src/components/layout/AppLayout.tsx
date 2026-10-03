@@ -1,7 +1,8 @@
-import { Menu, X } from 'lucide-react'
+import { Menu, Search, X } from 'lucide-react'
 import { Suspense, useEffect, useState, type ReactNode } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
+import { CommandPalette } from './CommandPalette'
 import { ContentLoader } from './PageLoader'
 import { SkillBridgeLogo } from '../ui/SkillBridgeLogo'
 import { Sidebar } from './Sidebar'
@@ -13,12 +14,35 @@ import { Sidebar } from './Sidebar'
  */
 export function AppLayout({ children }: { children?: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const location = useLocation()
 
-  // Any route change closes the drawer so it never covers the new page.
-  useEffect(() => {
+  // Close the drawer on any route change so it never covers the new page.
+  // Derived during render (React's "adjust state when a prop changes" pattern)
+  // instead of an effect that fires an extra render.
+  const [lastPath, setLastPath] = useState(location.pathname)
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname)
     setDrawerOpen(false)
-  }, [location.pathname])
+  }
+
+  // ⌘K / Ctrl+K opens the command palette from anywhere in the shell.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setPaletteOpen((open) => !open)
+      }
+    }
+    const onOpenPalette = () => setPaletteOpen(true)
+    window.addEventListener('keydown', onKeyDown)
+    // The sidebar's search button fires this; keeps the palette state lifted.
+    window.addEventListener('sb:open-palette', onOpenPalette)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('sb:open-palette', onOpenPalette)
+    }
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : ''
@@ -51,7 +75,14 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             SkillBridge <span className="text-brand-300">AI</span>
           </span>
         </span>
-        <span className="w-9" />
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('sb:open-palette'))}
+          aria-label="Search (command palette)"
+          className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-slate-300"
+        >
+          <Search className="h-4 w-4" />
+        </button>
       </header>
 
       {/* Mobile drawer */}
@@ -80,9 +111,16 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
           {/* Pages are lazily loaded per route, so the fallback lives here - the
               sidebar stays visible while a page chunk arrives. */}
-          <Suspense fallback={<ContentLoader />}>{children ?? <Outlet />}</Suspense>
+          <Suspense fallback={<ContentLoader />}>
+            {/* Keyed on pathname so each route fades in fresh. */}
+            <div key={location.pathname} className="sb-rise">
+              {children ?? <Outlet />}
+            </div>
+          </Suspense>
         </div>
       </main>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   )
 }

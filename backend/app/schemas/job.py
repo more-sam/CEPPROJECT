@@ -14,6 +14,7 @@ class CompanySummary(BaseModel):
     logo_url: str | None = None
     website_url: str | None = None
     location: str | None = None
+    industry: str | None = None
     initials: str = ""
 
 
@@ -36,7 +37,13 @@ class JobListItem(BaseModel):
     work_type: str
     experience_level: str
     source: str
+    # Application status: open | closed | expired | unknown. "unknown" is the
+    # honest default - a stored row alone does not prove applications are open.
+    status: str = "unknown"
     posted_at: datetime | None = None
+    expires_at: datetime | None = None
+    # Set only when a real source confirmed the listing; NULL for demo rows.
+    last_verified_at: datetime | None = None
     company: CompanySummary
     required_skills: list[JobRequiredSkill] = Field(default_factory=list)
     application_url: str = ""
@@ -67,3 +74,14 @@ class JobFilterOptions(BaseModel):
     work_types: list[str] = Field(default_factory=list)
     experience_levels: list[str] = Field(default_factory=list)
     categories: list[str] = Field(default_factory=list)
+    # Application statuses actually present (e.g. ["open", "closed"]).
+    statuses: list[str] = Field(default_factory=list)
+    # Companies that have at least one listing, for the company filter.
+    companies: list[CompanyRef] = Field(default_factory=list)
+
+
+class CompanyRef(BaseModel):
+    """Minimal company identity used in filter dropdowns."""
+
+    id: int
+    name: str
