@@ -6,18 +6,24 @@ whole table.
 
 from dataclasses import dataclass
 
-from sqlalchemy import Select, func, or_, select
+from sqlalchemy import Select, case, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.company import Company
+from app.models.enums import JobStatus
 from app.models.job import Job, JobSkill
 from app.models.skill import Skill
+from app.schemas.job import CompanyRef, JobFilterOptions
 from app.services.matching_service import MatchResult, compute_match, requirements_from_job
 
 DEFAULT_PAGE_SIZE = 12
 MAX_PAGE_SIZE = 60
 
 ALLOWED_SORTS = {"newest", "compatibility", "relevance", "title"}
+
+# The four application states a stored row may carry. Used to validate the
+# status filter and to build the filter-options payload.
+JOB_STATUS_VALUES: frozenset[str] = frozenset(item.value for item in JobStatus)
 
 
 @dataclass
@@ -36,6 +42,15 @@ def _base_query() -> Select:
     )
 
 
+def base_query() -> Select:
+    """Every listing with its company and required skills eagerly loaded.
+
+    Public entry point for other services that need to score the whole table
+    (e.g. grouping matches by company) rather than one filtered page.
+    """
+    return _base_query()
+
+
 def apply_filters(
     query: Select,
     *,
@@ -46,6 +61,7 @@ def apply_filters(
     experience_level: str | None = None,
     skill_slug: str | None = None,
     company_id: int | None = None,
+    status: str | None = None,
 ) -> Select:
     """Apply the opportunities-page filter set to a query."""
     if search:
@@ -64,6 +80,12 @@ def apply_filters(
         query = query.where(Job.experience_level == experience_level)
     if company_id:
         query = query.where(Job.company_id == company_id)
+    if status:
+        # Accepts the four stored states. "unknown" is filterable too, so the
+        # UI can show the honest "not verified" bucket instead of hiding it.
+        if status not in JOB_STATUS_VALUES:
+            raise ValueError(f"Unsupported status filter: {status!r}")
+        query = query.where(Job.status == status)
 
     if skill_slug:
         query = query.where(
@@ -176,8 +198,11 @@ def get_jobs_by_ids(db: Session, job_ids: list[int]) -> list[Job]:
     return list(db.scalars(_base_query().where(Job.id.in_(job_ids))))
 
 
-def filter_options(db: Session) -> dict[str, list[str]]:
-    """Distinct filter values actually present in the data."""
+def filter_options(db: Session) -> JobFilterOptions:
+    """Distinct filter values actually present in the data.
+
+    Built as the response schema so the router cannot drift from the payload.
+    """
 
     def distinct(column) -> list[str]:  # noqa: ANN001
         rows = db.scalars(select(column).distinct().order_by(column)).all()
@@ -190,13 +215,97 @@ def filter_options(db: Session) -> dict[str, list[str]]:
         .order_by(Skill.category)
     ).all()
 
-    return {
-        "locations": distinct(Job.location),
-        "employment_types": distinct(Job.employment_type),
-        "work_types": distinct(Job.work_type),
-        "experience_levels": distinct(Job.experience_level),
-        "categories": [value for value in categories if value],
-    }
+    return JobFilterOptions(
+        locations=distinct(Job.location),
+        employment_types=distinct(Job.employment_type),
+        work_types=distinct(Job.work_type),
+        experience_levels=distinct(Job.experience_level),
+        categories=[value for value in categories if value],
+        statuses=distinct(Job.status),
+        companies=[
+            CompanyRef(id=row.id, name=row.name)
+            for row in company_rows_with_listings(db)
+        ],
+    )
+
+
+# ---------------------------------------------------------------------------
+# Companies
+# ---------------------------------------------------------------------------
+def company_rows_with_listings(db: Session) -> list[Company]:
+    """Every company that has at least one opportunity, in display order.
+
+    Companies with no listings are excluded: a filter dropdown offering an
+    employer with nothing to show is a dead end.
+    """
+    listed = select(Job.company_id).distinct().subquery()
+    return list(
+        db.scalars(
+            select(Company).where(Company.id.in_(listed)).order_by(Company.name)
+        ).all()
+    )
+
+
+def get_company(db: Session, company_id: int) -> Company | None:
+    return db.get(Company, company_id)
+
+
+def company_role_counts(db: Session, company_id: int) -> tuple[int, int]:
+    """(open roles, total roles) for one company.
+
+    `open` is counted strictly from stored `status`; anything else - including
+    `unknown` - is not counted as open, because an unverified row proves nothing.
+    """
+    total = int(
+        db.scalar(select(func.count()).select_from(Job).where(Job.company_id == company_id))
+        or 0
+    )
+    open_roles = int(
+        db.scalar(
+            select(func.count())
+            .select_from(Job)
+            .where(Job.company_id == company_id, Job.status == JobStatus.OPEN.value)
+        )
+        or 0
+    )
+    return open_roles, total
+
+
+def company_role_counts_bulk(db: Session) -> dict[int, tuple[int, int]]:
+    """(open roles, total roles) for every company that has listings.
+
+    One grouped query rather than a per-company round trip, so the companies
+    directory stays a single request.
+    """
+    rows = db.execute(
+        select(
+            Job.company_id,
+            func.count().label("total"),
+            func.sum(case((Job.status == JobStatus.OPEN.value, 1), else_=0)).label("open"),
+        )
+        .group_by(Job.company_id)
+    )
+    counts: dict[int, tuple[int, int]] = {}
+    for company_id, total, open_roles in rows:
+        counts[int(company_id)] = (int(open_roles or 0), int(total or 0))
+    return counts
+
+
+def list_companies(
+    db: Session,
+    *,
+    only_open: bool = False,
+    search: str | None = None,
+) -> list[Company]:
+    """Companies with at least one listing, optionally only those hiring."""
+    rows = company_rows_with_listings(db)
+    if only_open:
+        counts = company_role_counts_bulk(db)
+        rows = [row for row in rows if counts.get(row.id, (0, 0))[0] > 0]
+    if search:
+        term = search.strip().lower()
+        rows = [row for row in rows if term in row.name.lower()]
+    return rows
 
 
 def build_search_text(job: Job) -> str:

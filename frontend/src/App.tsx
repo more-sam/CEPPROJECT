@@ -20,6 +20,7 @@ import NotFound from './pages/NotFound'
 const AssessmentTake = lazy(() => import('./pages/AssessmentTake'))
 const Assessments = lazy(() => import('./pages/Assessments'))
 const CareerAssistant = lazy(() => import('./pages/CareerAssistant'))
+const CompanyDetails = lazy(() => import('./pages/CompanyDetails'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Login = lazy(() => import('./pages/Login'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
@@ -90,6 +91,17 @@ export default function App() {
           element={
             <AdaptiveLayout>
               <OpportunityDetails />
+            </AdaptiveLayout>
+          }
+        />
+        {/* Company record - browsable signed in or out. */}
+        <Route
+          path="/companies/:companyId"
+          element={
+            <AdaptiveLayout>
+              <Suspense fallback={<ContentLoader />}>
+                <CompanyDetails />
+              </Suspense>
             </AdaptiveLayout>
           }
         />

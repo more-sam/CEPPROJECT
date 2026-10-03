@@ -68,6 +68,8 @@ export function FilterPanel({
     value.work_type,
     value.experience_level,
     value.skill,
+    value.status,
+    value.company_id,
   ].filter(Boolean).length
 
   return (
@@ -88,6 +90,8 @@ export function FilterPanel({
                 work_type: undefined,
                 experience_level: undefined,
                 skill: undefined,
+                status: undefined,
+                company_id: undefined,
                 page: 1,
               })
             }
@@ -172,6 +176,58 @@ export function FilterPanel({
           ))}
         </select>
       </div>
+
+      {/* Company dropdown: every employer with at least one listing. */}
+      {options?.companies && options.companies.length > 0 && (
+        <div>
+          <label
+            htmlFor="filter-company"
+            className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-slate-500"
+          >
+            Company
+          </label>
+          <select
+            id="filter-company"
+            value={value.company_id ?? ''}
+            onChange={(event) =>
+              patch({
+                company_id: event.target.value
+                  ? Number(event.target.value)
+                  : undefined,
+              })
+            }
+            className="w-full rounded-xl border border-white/10 bg-ink-850 px-3 py-2 text-xs text-slate-300 focus:border-brand-400/40 focus:outline-none"
+          >
+            <option value="">Any company</option>
+            {options.companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Status filter: the four stored states. "open" strongly filtered. */}
+      {options?.statuses && options.statuses.length > 0 && (
+        <div>
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            Application status
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {options.statuses.map((s) => (
+              <Chip
+                key={s}
+                label={s === 'open' ? 'Open' : s === 'closed' ? 'Closed' : s === 'expired' ? 'Expired' : 'Unknown'}
+                active={value.status === s}
+                onClick={() =>
+                  patch({ status: value.status === s ? undefined : (s as typeof value.status) })
+                }
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {showCompatibility && (
         <div>

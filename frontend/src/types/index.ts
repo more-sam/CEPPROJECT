@@ -1,1 +1,572 @@
-/**\n * Shared API types.\n *\n * These mirror the backend Pydantic schemas. Notably, `storage_path` is absent\n * from the resume types because the API never exposes it, and\n * `compatibilityScore` is nullable because an anonymous visitor has no skill set\n * to score against.\n */\n\n// ---------------------------------------------------------------------------\n// Auth\n// ---------------------------------------------------------------------------\nexport interface User {\n  id: number\n  email: string\n  is_active: boolean\n  created_at: string\n}\n\nexport interface AuthResponse {\n  message: string\n  user: User\n  has_profile: boolean\n}\n\nexport interface RegisterPayload {\n  email: string\n  password: string\n  full_name?: string\n}\n\nexport interface LoginPayload {\n  email: string\n  password: string\n}\n\n// ---------------------------------------------------------------------------\n// Profile\n// ---------------------------------------------------------------------------\nexport type WorkType = 'remote' | 'hybrid' | 'onsite'\nexport type Proficiency = 'unknown' | 'beginner' | 'intermediate' | 'advanced'\n\nexport interface Profile {\n  id: number\n  full_name: string | null\n  college: string | null\n  degree: string | null\n  branch: string | null\n  graduation_year: number | null\n  preferred_roles: string[]\n  preferred_locations: string[]\n  work_type: WorkType | null\n  bio: string | null\n  created_at: string\n  updated_at: string\n}\n\nexport interface StudentSkill {\n  id: number\n  skill_id: number\n  name: string\n  slug: string\n  category: string\n  proficiency: Proficiency\n  confidence: number\n  source: string\n}\n\nexport interface SkillCatalogueItem {\n  id: number\n  name: string\n  slug: string\n  category: string\n  description: string | null\n}\n\n// ---------------------------------------------------------------------------\n// Resume\n// ---------------------------------------------------------------------------\nexport type AnalysisStatus = 'pending' | 'processing' | 'completed' | 'failed'\n\nexport interface ResumeSummary {\n  id: number\n  filename: string\n  file_type: string\n  file_size_bytes: number\n  analysis_status: AnalysisStatus\n  analysis_error: string | null\n  skill_count: number\n  uploaded_at: string\n}\n\nexport interface DetectedSkill {\n  name: string\n  slug: string\n  category: string\n  confidence: number\n  occurrences: number\n  evidence: 'exact' | 'alias' | 'lemma'\n  saved: boolean\n}\n\nexport interface ResumeAnalysis {\n  resume: ResumeSummary\n  detected_skills: DetectedSkill[]\n  skills_by_category: Record<string, string[]>\n  sections_found: string[]\n  section_previews: Record<string, string[]>\n  word_count: number\n  warnings: string[]\n  detected_name: string | null\n  detected_email: string | null\n  top_opportunities: OpportunityCard[]\n}\n\nexport interface ResumeUploadResponse {\n  message: string\n  analysis: ResumeAnalysis\n}\n\n// ---------------------------------------------------------------------------\n// Opportunities\n// ---------------------------------------------------------------------------\nexport type EmploymentType = 'internship' | 'full_time' | 'part_time' | 'contract'\nexport type ExperienceLevel = 'intern' | 'entry' | 'mid' | 'senior'\n\nexport type ApplicationStatus = 'open' | 'closed' | 'expired' | 'unknown'\n\nexport interface CompanySummary {\n  id: number\n  name: string\n  description: string | null\n  logo_url: string | null\n  website_url: string | null\n  location: string | null\n  industry: string | null\n  initials: string\n}\n\nexport interface RequiredSkill {\n  name: string\n  slug: string\n  category: string\n  importance: 'low' | 'medium' | 'high'\n}\n\nexport interface SemanticMatch {\n  student_skill: string\n  job_skill: string\n  similarity: number\n  explanation: string\n}\n\nexport interface OpportunityCard {\n  id: number\n  title: string\n  location: string\n  employment_type: EmploymentType\n  work_type: WorkType\n  experience_level: ExperienceLevel\n  /** Always \"sample-data\" for seeded rows - the UI must say so. */\n  source: string\n  posted_at: string | null\n  company: CompanySummary\n  required_skills: RequiredSkill[]\n  application_url: string\n  /** Null when browsing anonymously. */\n  compatibility_score: number | null\n  matched_skills: string[]\n  missing_skills: string[]\n  semantic_matches: SemanticMatch[]\n  reasons: string[]\n  is_saved: boolean\n}\n\nexport interface SkillBreakdownEntry {\n  skill: string\n  slug: string\n  category: string\n  importance: string\n  weight: number\n  relation: 'exact' | 'semantic' | 'missing'\n  matched: boolean\n}\n\nexport interface OpportunityDetail extends OpportunityCard {\n  description: string\n  application_url: string\n  requirements_text: string | null\n  skill_breakdown: SkillBreakdownEntry[]\n  weighted_score: number | null\n  semantic_score: number | null\n}\n\nexport interface PageMeta {\n  total: number\n  page: number\n  page_size: number\n  total_pages: number\n  has_next: boolean\n  has_previous: boolean\n}\n\nexport interface Paginated<T> {\n  items: T[]\n  meta: PageMeta\n}\n\nexport interface JobFilterOptions {\n  locations: string[]\n  employment_types: string[]\n  work_types: string[]\n  experience_levels: string[]\n  categories: string[]\n  // Application statuses actually present (e.g. [\"open\", \"closed\"]).\n  statuses: string[]\n  // Companies that have at least one listing, for the company filter.\n  companies: { id: number; name: string }[]\n}\n\nexport interface JobQuery {\n  q?: string\n  location?: string\n  employment_type?: string\n  work_type?: string\n  experience_level?: string\n  skill?: string\n  min_compatibility?: number\n  status?: ApplicationStatus\n  company_id?: number\n  sort?: 'newest' | 'compatibility' | 'relevance' | 'title'\n  page?: number\n  page_size?: number\n}\n\n// ---------------------------------------------------------------------------\n// Matching\n// ---------------------------------------------------------------------------\nexport interface MatchResponse {\n  job_id: number\n  job_title: string\n  company_name: string\n  compatibility_score: number\n  weighted_score: number\n  semantic_score: number\n  combined_score: number\n  total_required: number\n  matched_skills: string[]\n  missing_skills: string[]\n  additional_skills: string[]\n  semantic_matches: SemanticMatch[]\n  skill_breakdown: SkillBreakdownEntry[]\n  reasons: string[]\n  disclaimer: string\n}\n\nexport interface RecommendationResponse {\n  items: OpportunityCard[]\n  total: number\n  note: string | null\n}\n\nexport interface SavedJob {\n  id: number\n  job_id: number\n  created_at: string\n  job: OpportunityCard | null\n}\n\n// ---------------------------------------------------------------------------\n// Skill gap\n// ---------------------------------------------------------------------------\nexport interface SkillGapItem {\n  name: string\n  slug: string\n  category: string\n  importance: string\n  opportunities_requiring: number\n  why_it_matters: string\n  in_roadmap: boolean\n}\n\nexport interface SkillGapResponse {\n  job_id: number | null\n  job_title: string | null\n  company_name: string | null\n  available: SkillGapItem[]\n  developing: SkillGapItem[]\n  missing: SkillGapItem[]\n  compatibility_score: number\n  total_required: number\n  /** What the figures were computed against, in words. */\n  scope: string\n  note: string | null\n}\n\n// ---------------------------------------------------------------------------\n// Roadmap\n// ---------------------------------------------------------------------------\nexport type RoadmapStatus = 'not_started' | 'in_progress' | 'completed'\n\nexport interface RoadmapItem {\n  id: number\n  order_index: number\n  priority: 'high' | 'medium' | 'low'\n  status: RoadmapStatus\n  estimated_hours: number\n  reason: string\n  prerequisites: string[]\n  resources: { title: string; url: string }[]\n  skill_id: number\n  skill_name: string\n  skill_slug: string\n  skill_category: string\n}\n\nexport interface Roadmap {\n  id: number\n  title: string\n  description: string | null\n  source: string\n  target_job_id: number | null\n  target_job_title: string | null\n  created_at: string\n  updated_at: string\n  items: RoadmapItem[]\n  total_items: number\n  completed_items: number\n  in_progress_items: number\n  total_hours: number\n  completed_hours: number\n  progress_percentage: number\n}\n\n// ---------------------------------------------------------------------------\n// Assessments\n// ---------------------------------------------------------------------------\nexport interface AssessmentSummary {\n  id: number\n  title: string\n  description: string | null\n  difficulty: 'beginner' | 'intermediate' | 'advanced'\n  question_count: number\n  pass_score: number\n  skill_id: number\n  skill_name: string\n  skill_slug: string\n  skill_category: string\n  best_score: number | null\n  attempts: number\n  passed: boolean\n}\n\nexport interface AssessmentQuestion {\n  id: number\n  question: string\n  options: string[]\n  order_index: number\n}\n\nexport interface AssessmentDetail {\n  id: number\n  title: string\n  description: string | null\n  difficulty: string\n  pass_score: number\n  skill_name: string\n  skill_slug: string\n  skills_tested: string[]\n  questions: AssessmentQuestion[]\n}\n\nexport interface AssessmentReviewItem {\n  question_id: number\n  question: string\n  given: string\n  correct: string\n  is_correct: boolean\n  explanation: string\n}\n\nexport interface AssessmentResult {\n  id: number\n  assessment_id: number\n  assessment_title: string\n  skill_name: string\n  skill_slug: string\n  score: number\n  correct_count: number\n  total_count: number\n  passed: boolean\n  pass_score: number\n  completed_at: string\n  review: AssessmentReviewItem[]\n  progress_updated: boolean\n  progress_percentage: number\n  new_skills_added: string[]\n}\n\nexport interface AssessmentHistoryItem {\n  id: number\n  assessment_id: number\n  assessment_title: string\n  skill_name: string\n  score: number\n  passed: boolean\n  completed_at: string\n}\n\n// ---------------------------------------------------------------------------\n// Progress and dashboard\n// ---------------------------------------------------------------------------\nexport interface ProgressItem {\n  skill_id: number\n  skill_name: string\n  skill_slug: string\n  category: string\n  progress_percentage: number\n  status: 'not_started' | 'developing' | 'mastered'\n  best_assessment_score: number | null\n  assessments_taken: number\n  updated_at: string\n}\n\nexport interface ProgressOverview {\n  total_skills: number\n  mastered: number\n  developing: number\n  not_started: number\n  roadmap_items_total: number\n  roadmap_items_completed: number\n  roadmap_progress_percentage: number\n  assessments_taken: number\n  assessments_passed: number\n  average_assessment_score: number\n  total_learning_hours: number\n  completed_learning_hours: number\n  items: ProgressItem[]\n  score_history: { date: string; score: number; label: string }[]\n  category_breakdown: {\n    category: string\n    mastered: number\n    developing: number\n    not_started: number\n  }[]\n}\n\nexport interface DashboardMetric {\n  label: string\n  value: number\n  suffix: string\n  hint: string\n}\n\nexport interface SkillConstellationNode {\n  name: string\n  slug: string\n  category: string\n  state: 'owned' | 'learning' | 'gap'\n}\n\nexport interface ActivityEntry {\n  kind: 'resume' | 'assessment' | 'roadmap' | 'saved_job'\n  title: string\n  detail: string\n  occurred_at: string\n}\n\nexport interface OnboardingStep {\n  key: string\n  label: string\n  done: boolean\n}\n\nexport interface Dashboard {\n  greeting_name: string\n  has_profile: boolean\n  has_resume: boolean\n  has_skills: boolean\n  skills_identified: number\n  skills_by_category: { category: string; count: number }[]\n  opportunities_matched: number\n  skill_gaps: number\n  roadmap_progress_percentage: number\n  average_compatibility: number\n  metrics: DashboardMetric[]\n  recommendations: OpportunityCard[]\n  skill_constellation: SkillConstellationNode[]\n  recent_activity: ActivityEntry[]\n  roadmap_preview: {\n    id: number\n    skill: string\n    priority: string\n    status: RoadmapStatus\n    estimated_hours: number\n    reason: string\n  }[]\n  saved_jobs: {\n    id: number\n    title: string\n    company: string\n    company_initials: string\n    location: string\n  }[]\n  onboarding_steps: OnboardingStep[]\n  recommendation_note: string | null\n}\n\n// ---------------------------------------------------------------------------\n// Assistant\n// ---------------------------------------------------------------------------\nexport interface ChatSource {\n  label: string\n  detail: string\n}\n\nexport interface ChatResponse {\n  reply: string\n  mode: 'local' | 'llm'\n  sources: ChatSource[]\n  suggested_prompts: string[]\n  created_at: string\n}\n\nexport interface AssistantCapabilities {\n  llm_enabled: boolean\n  provider: string\n  model: string | null\n  note: string\n  suggested_prompts: string[]\n}\n\n// ---------------------------------------------------------------------------\n// Company detail\n// ---------------------------------------------------------------------------\nexport interface CompanyDetail {\n  id: number\n  name: string\n  description: string | null\n  logo_url: string | null\n  website_url: string | null\n  location: string | null\n  industry: string | null\n}\n\nexport interface CompanyJobsResponse {\n  items: OpportunityCard[]\n  meta: PageMeta\n}\n
+/**
+ * Shared API types.
+ *
+ * These mirror the backend Pydantic schemas. Notably, `storage_path` is absent
+ * from the resume types because the API never exposes it, and
+ * `compatibilityScore` is nullable because an anonymous visitor has no skill set
+ * to score against.
+ */
+
+// ---------------------------------------------------------------------------
+// Auth
+// ---------------------------------------------------------------------------
+export interface User {
+  id: number
+  email: string
+  is_active: boolean
+  created_at: string
+}
+
+export interface AuthResponse {
+  message: string
+  user: User
+  has_profile: boolean
+}
+
+export interface RegisterPayload {
+  email: string
+  password: string
+  full_name?: string
+}
+
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+// ---------------------------------------------------------------------------
+// Profile
+// ---------------------------------------------------------------------------
+export type WorkType = 'remote' | 'hybrid' | 'onsite'
+export type Proficiency = 'unknown' | 'beginner' | 'intermediate' | 'advanced'
+
+export interface Profile {
+  id: number
+  full_name: string | null
+  college: string | null
+  degree: string | null
+  branch: string | null
+  graduation_year: number | null
+  preferred_roles: string[]
+  preferred_locations: string[]
+  work_type: WorkType | null
+  bio: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface StudentSkill {
+  id: number
+  skill_id: number
+  name: string
+  slug: string
+  category: string
+  proficiency: Proficiency
+  confidence: number
+  source: string
+}
+
+export interface SkillCatalogueItem {
+  id: number
+  name: string
+  slug: string
+  category: string
+  description: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Resume
+// ---------------------------------------------------------------------------
+export type AnalysisStatus = 'pending' | 'processing' | 'completed' | 'failed'
+
+export interface ResumeSummary {
+  id: number
+  filename: string
+  file_type: string
+  file_size_bytes: number
+  analysis_status: AnalysisStatus
+  analysis_error: string | null
+  skill_count: number
+  uploaded_at: string
+}
+
+export interface DetectedSkill {
+  name: string
+  slug: string
+  category: string
+  confidence: number
+  occurrences: number
+  evidence: 'exact' | 'alias' | 'lemma'
+  saved: boolean
+}
+
+export interface ResumeAnalysis {
+  resume: ResumeSummary
+  detected_skills: DetectedSkill[]
+  skills_by_category: Record<string, string[]>
+  sections_found: string[]
+  section_previews: Record<string, string[]>
+  word_count: number
+  warnings: string[]
+  detected_name: string | null
+  detected_email: string | null
+  top_opportunities: OpportunityCard[]
+}
+
+export interface ResumeUploadResponse {
+  message: string
+  analysis: ResumeAnalysis
+}
+
+// ---------------------------------------------------------------------------
+// Opportunities
+// ---------------------------------------------------------------------------
+export type EmploymentType = 'internship' | 'full_time' | 'part_time' | 'contract'
+export type ExperienceLevel = 'intern' | 'entry' | 'mid' | 'senior'
+
+export type ApplicationStatus = 'open' | 'closed' | 'expired' | 'unknown'
+
+export interface CompanySummary {
+  id: number
+  name: string
+  description: string | null
+  logo_url: string | null
+  website_url: string | null
+  location: string | null
+  industry: string | null
+  initials: string
+}
+
+export interface RequiredSkill {
+  name: string
+  slug: string
+  category: string
+  importance: 'low' | 'medium' | 'high'
+}
+
+export interface SemanticMatch {
+  student_skill: string
+  job_skill: string
+  similarity: number
+  explanation: string
+}
+
+export interface OpportunityCard {
+  id: number
+  title: string
+  location: string
+  employment_type: EmploymentType
+  work_type: WorkType
+  experience_level: ExperienceLevel
+  /** Provenance. Seeded rows always say "DEMO" so the UI can label them. */
+  source: string
+  /**
+   * Application status as stored: open | closed | expired | unknown.
+   * `unknown` is honest by design - a stored row alone does not prove that
+   * applications are still being accepted, so the UI must never upgrade it to
+   * "open".
+   */
+  status: ApplicationStatus
+  posted_at: string | null
+  /** Closing date, when the stored status gives one. */
+  expires_at: string | null
+  /** Set only when a real source confirmed the listing. Null for demo rows. */
+  last_verified_at: string | null
+  company: CompanySummary
+  required_skills: RequiredSkill[]
+  /** Empty when the employer has no application page we can link to. */
+  application_url: string
+  /** Null when browsing anonymously. */
+  compatibility_score: number | null
+  matched_skills: string[]
+  missing_skills: string[]
+  semantic_matches: SemanticMatch[]
+  reasons: string[]
+  is_saved: boolean
+}
+
+export interface SkillBreakdownEntry {
+  skill: string
+  slug: string
+  category: string
+  importance: string
+  weight: number
+  relation: 'exact' | 'semantic' | 'missing'
+  matched: boolean
+}
+
+export interface OpportunityDetail extends OpportunityCard {
+  description: string
+  application_url: string
+  requirements_text: string | null
+  skill_breakdown: SkillBreakdownEntry[]
+  weighted_score: number | null
+  semantic_score: number | null
+}
+
+export interface PageMeta {
+  total: number
+  page: number
+  page_size: number
+  total_pages: number
+  has_next: boolean
+  has_previous: boolean
+}
+
+export interface Paginated<T> {
+  items: T[]
+  meta: PageMeta
+}
+
+export interface JobFilterOptions {
+  locations: string[]
+  employment_types: string[]
+  work_types: string[]
+  experience_levels: string[]
+  categories: string[]
+  // Application statuses actually present (e.g. ["open", "closed"]).
+  statuses: string[]
+  // Companies that have at least one listing, for the company filter.
+  companies: { id: number; name: string }[]
+}
+
+export interface JobQuery {
+  q?: string
+  location?: string
+  employment_type?: string
+  work_type?: string
+  experience_level?: string
+  skill?: string
+  min_compatibility?: number
+  status?: ApplicationStatus
+  company_id?: number
+  sort?: 'newest' | 'compatibility' | 'relevance' | 'title'
+  page?: number
+  page_size?: number
+}
+
+// ---------------------------------------------------------------------------
+// Matching
+// ---------------------------------------------------------------------------
+export interface MatchResponse {
+  job_id: number
+  job_title: string
+  company_name: string
+  compatibility_score: number
+  weighted_score: number
+  semantic_score: number
+  combined_score: number
+  total_required: number
+  matched_skills: string[]
+  missing_skills: string[]
+  additional_skills: string[]
+  semantic_matches: SemanticMatch[]
+  skill_breakdown: SkillBreakdownEntry[]
+  reasons: string[]
+  disclaimer: string
+}
+
+export interface RecommendationResponse {
+  items: OpportunityCard[]
+  total: number
+  note: string | null
+}
+
+export interface SavedJob {
+  id: number
+  job_id: number
+  created_at: string
+  job: OpportunityCard | null
+}
+
+// ---------------------------------------------------------------------------
+// Skill gap
+// ---------------------------------------------------------------------------
+export interface SkillGapItem {
+  name: string
+  slug: string
+  category: string
+  importance: string
+  opportunities_requiring: number
+  why_it_matters: string
+  in_roadmap: boolean
+}
+
+export interface SkillGapResponse {
+  job_id: number | null
+  job_title: string | null
+  company_name: string | null
+  available: SkillGapItem[]
+  developing: SkillGapItem[]
+  missing: SkillGapItem[]
+  compatibility_score: number
+  total_required: number
+  /** What the figures were computed against, in words. */
+  scope: string
+  note: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Roadmap
+// ---------------------------------------------------------------------------
+export type RoadmapStatus = 'not_started' | 'in_progress' | 'completed'
+
+export interface RoadmapItem {
+  id: number
+  order_index: number
+  priority: 'high' | 'medium' | 'low'
+  status: RoadmapStatus
+  estimated_hours: number
+  reason: string
+  prerequisites: string[]
+  resources: { title: string; url: string }[]
+  skill_id: number
+  skill_name: string
+  skill_slug: string
+  skill_category: string
+}
+
+export interface Roadmap {
+  id: number
+  title: string
+  description: string | null
+  source: string
+  target_job_id: number | null
+  target_job_title: string | null
+  created_at: string
+  updated_at: string
+  items: RoadmapItem[]
+  total_items: number
+  completed_items: number
+  in_progress_items: number
+  total_hours: number
+  completed_hours: number
+  progress_percentage: number
+}
+
+// ---------------------------------------------------------------------------
+// Assessments
+// ---------------------------------------------------------------------------
+export interface AssessmentSummary {
+  id: number
+  title: string
+  description: string | null
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  question_count: number
+  pass_score: number
+  skill_id: number
+  skill_name: string
+  skill_slug: string
+  skill_category: string
+  best_score: number | null
+  attempts: number
+  passed: boolean
+}
+
+export interface AssessmentQuestion {
+  id: number
+  question: string
+  options: string[]
+  order_index: number
+}
+
+export interface AssessmentDetail {
+  id: number
+  title: string
+  description: string | null
+  difficulty: string
+  pass_score: number
+  skill_name: string
+  skill_slug: string
+  skills_tested: string[]
+  questions: AssessmentQuestion[]
+}
+
+export interface AssessmentReviewItem {
+  question_id: number
+  question: string
+  given: string
+  correct: string
+  is_correct: boolean
+  explanation: string
+}
+
+export interface AssessmentResult {
+  id: number
+  assessment_id: number
+  assessment_title: string
+  skill_name: string
+  skill_slug: string
+  score: number
+  correct_count: number
+  total_count: number
+  passed: boolean
+  pass_score: number
+  completed_at: string
+  review: AssessmentReviewItem[]
+  progress_updated: boolean
+  progress_percentage: number
+  new_skills_added: string[]
+}
+
+export interface AssessmentHistoryItem {
+  id: number
+  assessment_id: number
+  assessment_title: string
+  skill_name: string
+  score: number
+  passed: boolean
+  completed_at: string
+}
+
+// ---------------------------------------------------------------------------
+// Progress and dashboard
+// ---------------------------------------------------------------------------
+export interface ProgressItem {
+  skill_id: number
+  skill_name: string
+  skill_slug: string
+  category: string
+  progress_percentage: number
+  status: 'not_started' | 'developing' | 'mastered'
+  best_assessment_score: number | null
+  assessments_taken: number
+  updated_at: string
+}
+
+export interface ProgressOverview {
+  total_skills: number
+  mastered: number
+  developing: number
+  not_started: number
+  roadmap_items_total: number
+  roadmap_items_completed: number
+  roadmap_progress_percentage: number
+  assessments_taken: number
+  assessments_passed: number
+  average_assessment_score: number
+  total_learning_hours: number
+  completed_learning_hours: number
+  items: ProgressItem[]
+  score_history: { date: string; score: number; label: string }[]
+  category_breakdown: {
+    category: string
+    mastered: number
+    developing: number
+    not_started: number
+  }[]
+}
+
+export interface DashboardMetric {
+  label: string
+  value: number
+  suffix: string
+  hint: string
+}
+
+export interface SkillConstellationNode {
+  name: string
+  slug: string
+  category: string
+  state: 'owned' | 'learning' | 'gap'
+}
+
+export interface ActivityEntry {
+  kind: 'resume' | 'assessment' | 'roadmap' | 'saved_job'
+  title: string
+  detail: string
+  occurred_at: string
+}
+
+export interface OnboardingStep {
+  key: string
+  label: string
+  done: boolean
+}
+
+export interface Dashboard {
+  greeting_name: string
+  has_profile: boolean
+  has_resume: boolean
+  has_skills: boolean
+  skills_identified: number
+  skills_by_category: { category: string; count: number }[]
+  opportunities_matched: number
+  skill_gaps: number
+  roadmap_progress_percentage: number
+  average_compatibility: number
+  metrics: DashboardMetric[]
+  recommendations: OpportunityCard[]
+  skill_constellation: SkillConstellationNode[]
+  recent_activity: ActivityEntry[]
+  roadmap_preview: {
+    id: number
+    skill: string
+    priority: string
+    status: RoadmapStatus
+    estimated_hours: number
+    reason: string
+  }[]
+  saved_jobs: {
+    id: number
+    title: string
+    company: string
+    company_initials: string
+    location: string
+  }[]
+  onboarding_steps: OnboardingStep[]
+  recommendation_note: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Assistant
+// ---------------------------------------------------------------------------
+export interface ChatSource {
+  label: string
+  detail: string
+}
+
+export interface ChatResponse {
+  reply: string
+  mode: 'local' | 'llm'
+  sources: ChatSource[]
+  suggested_prompts: string[]
+  created_at: string
+}
+
+export interface AssistantCapabilities {
+  llm_enabled: boolean
+  provider: string
+  model: string | null
+  note: string
+  suggested_prompts: string[]
+}
+
+// ---------------------------------------------------------------------------
+// Company detail
+// ---------------------------------------------------------------------------
+export interface CompanyDetail {
+  id: number
+  name: string
+  description: string | null
+  logo_url: string | null
+  /** Null when no verified website is on file - never a fabricated URL. */
+  website_url: string | null
+  location: string | null
+  industry: string | null
+  initials: string
+  /** Counted strictly from rows stored with status "open". */
+  open_roles: number
+  total_roles: number
+}
+
+export interface CompanyDirectoryResponse {
+  items: CompanyDetail[]
+  total: number
+}
+
+/** A company's listings, open-only or all, as returned by the company endpoints. */
+export interface CompanyJobsResponse {
+  items: OpportunityCard[]
+  meta: PageMeta
+}

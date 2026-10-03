@@ -2,7 +2,6 @@ import {
   ArrowLeft,
   Bookmark,
   BookmarkCheck,
-  ExternalLink,
   MapPin,
   Route as RouteIcon,
   Sparkles,
@@ -11,6 +10,8 @@ import {
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import { ApplyAction } from '../components/opportunities/ApplyAction'
+import { ApplicationStatus } from '../components/ui/ApplicationStatus'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { CompanyLogo } from '../components/ui/CompanyLogo'
@@ -20,11 +21,10 @@ import { SkeletonCard } from '../components/ui/LoadingSkeleton'
 import { SkillChip } from '../components/ui/SkillChip'
 import { useAsync } from '../hooks/useAsync'
 import { getApiErrorMessage } from '../services/api'
-import { isSafeExternalUrl } from '../utils/links'
+import type { OpportunityCard, SkillBreakdownEntry } from '../types'
 import { getJob, getSimilarJobs } from '../services/jobs'
 import { toggleSavedJob } from '../services/matching'
 import { createRoadmap } from '../services/roadmap'
-import type { OpportunityCard, SkillBreakdownEntry } from '../types'
 import { useAuth } from '../store/authContext'
 
 const WORK_TYPE_LABEL: Record<string, string> = {
@@ -141,6 +141,7 @@ export default function OpportunityDetails() {
               </h1>
               <p className="mt-1 text-sm text-slate-300">{detail.company.name}</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
+                <ApplicationStatus status={detail.status} expiresAt={detail.expires_at} />
                 <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
                   <MapPin className="h-3 w-3" />
                   {detail.location}
@@ -150,8 +151,20 @@ export default function OpportunityDetails() {
                 </Badge>
                 <Badge>{WORK_TYPE_LABEL[detail.work_type] ?? detail.work_type}</Badge>
                 <Badge>{detail.experience_level}</Badge>
-                <Badge tone="neutral">{detail.source}</Badge>
+                {(detail.source ?? '').toUpperCase() === 'DEMO' ? (
+                  <Badge tone="neutral">Demo opportunity</Badge>
+                ) : (
+                  <Badge tone="neutral">{detail.source}</Badge>
+                )}
               </div>
+
+              {/* Company name is a real link into the company record. */}
+              <p className="mt-2 text-xs text-slate-400">
+                <Link to={`/companies/${detail.company.id}`} className="hover:text-brand-300">
+                  {detail.company.name}
+                </Link>
+                {detail.company.industry && ` · ${detail.company.industry}`}
+              </p>
             </div>
           </div>
 
@@ -166,33 +179,13 @@ export default function OpportunityDetails() {
           </div>
         )}
 
-        <div className="mt-5 flex flex-wrap gap-2.5">
-          {isSafeExternalUrl(detail.application_url) ? (
-            <a
-              href={detail.application_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
-            >
-              Apply on company site
-              <ExternalLink className="ml-1.5 inline h-4 w-4" />
-            </a>
-          ) : (
-            <Button variant="ghost" disabled>
-              Application link unavailable
-            </Button>
-          )}
-          {signedIn && isSafeExternalUrl(detail.company.website_url) && (
-            <a
-              href={detail.company.website_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
-            >
-              Visit company website
-              <ExternalLink className="ml-1.5 inline h-4 w-4" />
-            </a>
-          )}
+        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+          {/* Apply/website per stored status - no active Apply for closed rows. */}
+          <ApplyAction
+            status={detail.status}
+            applicationUrl={detail.application_url}
+            websiteUrl={detail.company.website_url}
+          />
 
           {signedIn ? (
             <>

@@ -23,7 +23,7 @@ from app.core.config import settings
 from app.core.security import hash_password
 from app.models.assessment import Assessment, AssessmentQuestion, AssessmentResult
 from app.models.company import Company
-from app.models.enums import SkillImportance
+from app.models.enums import JobStatus, SkillImportance
 from app.models.job import Job, JobSkill
 from app.models.match import JobMatch, SavedJob
 from app.models.profile import StudentProfile
@@ -92,6 +92,29 @@ def seed_skills(db: Session) -> dict[str, Skill]:
     return {slug: skill for slug, skill in existing.items()}
 
 
+def _closing_date(
+    entry: dict, status: str, posted: datetime
+) -> datetime | None:
+    """Closing date for a seeded listing, derived from its explicit status.
+
+    An `expires_at` in the future while `status == "expired"` (or the reverse)
+    is a contradiction the UI would have to paper over, so the stored status is
+    the source of truth and the date is derived from it. `unknown` gets no date
+    at all: we genuinely do not know when it closes.
+    """
+    if status == JobStatus.UNKNOWN.value:
+        return None
+
+    explicit = entry.get("closing_in_days")
+    if explicit is not None:
+        return posted + timedelta(days=int(explicit))
+
+    if status == JobStatus.EXPIRED.value:
+        # Already in the past relative to `posted`, so the two agree.
+        return posted + timedelta(days=3)
+    return posted + timedelta(days=30)
+
+
 def seed_companies(db: Session, payload: dict) -> dict[str, Company]:
     existing = {company.name: company for company in db.scalars(select(Company)).all()}
 
@@ -158,10 +181,10 @@ def seed_jobs(db: Session, payload: dict, skills: dict[str, Skill]) -> int:
         # Application status comes ONLY from the explicit seed entry. A missing
         # status stays "unknown" — existence in the table does not prove that
         # applications are open (spec section 7).
-        job.status = str(entry.get("status", "unknown"))
+        job.status = str(entry.get("status", JobStatus.UNKNOWN.value))
         # Demo rows are never "verified": no real source has confirmed them.
         job.last_verified_at = None
-        job.expires_at = posted + timedelta(days=45)
+        job.expires_at = _closing_date(entry, job.status, posted)
         db.flush()
 
         # --- merge explicit + extracted requirements ---

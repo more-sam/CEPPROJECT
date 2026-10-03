@@ -19,6 +19,8 @@ import {
   YAxis,
 } from 'recharts'
 
+import { CompaniesMatchingSkills } from '../components/opportunities/CompaniesMatchingSkills'
+import { OpenOpportunities } from '../components/opportunities/OpenOpportunities'
 import { OpportunityCard } from '../components/opportunities/OpportunityCard'
 import { SkillNetwork } from '../components/skills/SkillNetwork'
 import { Button } from '../components/ui/Button'
@@ -259,6 +261,17 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      {/* Matching employers + the roles they have open. */}
+      <CompaniesMatchingSkills
+        companyLimit={6}
+        opportunityLimit={3}
+        title="Companies with Matching Roles"
+        subtitle="Employers whose listings align with your skills, and a few of their open roles."
+      />
+
+      {/* Prominently: only rows the database stores as open. */}
+      <OpenOpportunities limit={6} />
 
       {/* Roadmap preview + activity */}
       <section className="grid gap-4 lg:grid-cols-2">

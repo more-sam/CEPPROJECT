@@ -66,6 +66,40 @@ class JobDetail(JobListItem):
     semantic_score: float | None = None
 
 
+class CompanyRef(BaseModel):
+    """Minimal company identity used in filter dropdowns."""
+
+    id: int
+    name: str
+
+
+class CompanyListItem(BaseModel):
+    """A company row in the directory / "companies that match" grid."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str | None = None
+    logo_url: str | None = None
+    website_url: str | None = None
+    location: str | None = None
+    industry: str | None = None
+    initials: str = ""
+    # Counted strictly from stored `status = "open"` rows. Never inferred.
+    open_roles: int = 0
+    total_roles: int = 0
+
+
+class CompanyDetail(CompanyListItem):
+    """Full company record for the company details page."""
+
+
+class CompanyDirectoryResponse(BaseModel):
+    items: list[CompanyListItem]
+    total: int
+
+
 class JobFilterOptions(BaseModel):
     """Distinct values available for the filter panel."""
 
@@ -78,10 +112,3 @@ class JobFilterOptions(BaseModel):
     statuses: list[str] = Field(default_factory=list)
     # Companies that have at least one listing, for the company filter.
     companies: list[CompanyRef] = Field(default_factory=list)
-
-
-class CompanyRef(BaseModel):
-    """Minimal company identity used in filter dropdowns."""
-
-    id: int
-    name: str

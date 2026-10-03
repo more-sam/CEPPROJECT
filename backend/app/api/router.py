@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.api.auth import router as auth_router
 from app.api.assessments import router as assessments_router
+from app.api.companies import router as companies_router
 from app.api.health import router as health_router
 from app.api.jobs import router as jobs_router
 from app.api.matching import router as matching_router
@@ -20,6 +21,7 @@ api_router.include_router(auth_router)
 api_router.include_router(profile_router)
 api_router.include_router(resume_router)
 api_router.include_router(jobs_router)
+api_router.include_router(companies_router)
 api_router.include_router(matching_router)
 api_router.include_router(roadmaps_router)
 api_router.include_router(assessments_router)

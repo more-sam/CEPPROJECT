@@ -33,6 +33,8 @@ const INITIAL_FILTERS: FilterState = {
   experience_level: undefined,
   skill: undefined,
   min_compatibility: 0,
+  status: undefined,
+  company_id: undefined,
   sort: 'compatibility',
   page: 1,
   page_size: DEFAULT_PAGE_SIZE,
@@ -46,11 +48,20 @@ export default function Opportunities() {
   const [filters, setFilters] = useState<FilterState>(() => ({
     ...INITIAL_FILTERS,
     skill: searchParams.get('skill') ?? undefined,
+    status: (searchParams.get('status') as FilterState['status']) ?? undefined,
+    company_id: searchParams.get('company_id')
+      ? Number(searchParams.get('company_id'))
+      : undefined,
     q: searchParams.get('q') ?? '',
   }))
   const [search, setSearch] = useState(filters.q ?? '')
   const [savingId, setSavingId] = useState<number | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  // The prominent "Open Now" toggle. When on, every other `status` selection
+  // is overridden by `open`, so the toggle reads as an honest filter over
+  // stored data rather than a guess about live vacancies.
+  const openOnly = filters.status === 'open'
 
   // Debounce the free-text box so typing does not hammer the API.
   useEffect(() => {
@@ -67,8 +78,10 @@ export default function Opportunities() {
     const next = new URLSearchParams()
     if (filters.q) next.set('q', filters.q)
     if (filters.skill) next.set('skill', filters.skill)
+    if (filters.status) next.set('status', filters.status)
+    if (filters.company_id) next.set('company_id', String(filters.company_id))
     setSearchParams(next, { replace: true })
-  }, [filters.q, filters.skill, setSearchParams])
+  }, [filters.q, filters.skill, filters.status, filters.company_id, setSearchParams])
 
   const filterOptions = useAsync(getJobFilters, [])
   const catalogue = useAsync(() => fetchSkillCatalogue(), [])
@@ -179,6 +192,38 @@ export default function Opportunities() {
             onChange={setFilters}
             showCompatibility={signedIn}
           />
+
+          {/* One-tap "show only what is genuinely open for applications". */}
+          <div className="sb-glass rounded-2xl p-4">
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+              Application status
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setFilters((current) => ({
+                    ...current,
+                    status: current.status === 'open' ? undefined : 'open',
+                    page: 1,
+                  }))
+                }
+                aria-pressed={openOnly}
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition ${
+                  openOnly
+                    ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+                    : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
+                }`}
+              >
+                <span
+                  className={`h-2 w-2 rounded-full ${openOnly ? 'bg-emerald-400' : 'bg-slate-500'}`}
+                  aria-hidden="true"
+                />
+                Open now only
+              </button>
+              <span className="text-[11px] text-slate-500">only status = open</span>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-4">

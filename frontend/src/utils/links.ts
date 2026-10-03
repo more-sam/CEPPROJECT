@@ -67,6 +67,23 @@ export function isSafeExternalUrl(value: unknown): value is string {
 }
 
 /**
+ * Render a website as a short, readable host for display (e.g.
+ * "https://www.tcs.com/careers" -> "tcs.com").
+ *
+ * Returns null for anything that is not a safe external URL, so a caller can
+ * show "Official website unavailable" instead of printing a raw or hostile
+ * string.
+ */
+export function displayHost(value: unknown): string | null {
+  if (!isSafeExternalUrl(value)) return null
+  try {
+    return new URL(value).hostname.replace(/^www\./, '')
+  } catch {
+    return null
+  }
+}
+
+/**
  * Build the rel attribute array for an external link.
  *
  * Keeping `noopener` and `noreferrer` together is the safe default. We only

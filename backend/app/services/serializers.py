@@ -7,7 +7,13 @@ a job in exactly the same shape.
 from app.models.job import Job
 from app.models.resume import Resume
 from app.models.roadmap import Roadmap
-from app.schemas.job import CompanySummary, JobDetail, JobListItem, JobRequiredSkill
+from app.schemas.job import (
+    CompanyListItem,
+    CompanySummary,
+    JobDetail,
+    JobListItem,
+    JobRequiredSkill,
+)
 from app.schemas.resume import ResumeSummary
 from app.schemas.roadmap import RoadmapItemResponse, RoadmapResponse
 from app.services.matching_service import MatchResult
@@ -23,7 +29,28 @@ def company_summary(company) -> CompanySummary | None:  # noqa: ANN001
         logo_url=company.logo_url,
         website_url=company.website_url,
         location=company.location,
+        industry=company.industry,
         initials=company.initials,
+    )
+
+
+def company_list_item(
+    company,  # noqa: ANN001
+    counts: tuple[int, int] = (0, 0),
+) -> CompanyListItem:
+    """Company row with its (open_roles, total_roles) counts attached."""
+    open_roles, total_roles = counts
+    return CompanyListItem(
+        id=company.id,
+        name=company.name,
+        description=company.description,
+        logo_url=company.logo_url,
+        website_url=company.website_url,
+        location=company.location,
+        industry=company.industry,
+        initials=company.initials,
+        open_roles=open_roles,
+        total_roles=total_roles,
     )
 
 

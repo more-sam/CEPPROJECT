@@ -9,6 +9,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { CompaniesMatchingSkills } from '../components/opportunities/CompaniesMatchingSkills'
 import { OpportunityCard } from '../components/opportunities/OpportunityCard'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -396,6 +397,13 @@ export default function ResumeAnalysis() {
               </div>
             </section>
           )}
+
+          {/* Employers plus the open roles behind them, per §3 of the feature. */}
+          <CompaniesMatchingSkills
+            companyLimit={6}
+            opportunityLimit={6}
+            eyebrow="What to do with these skills"
+          />
         </div>
       )}
     </div>

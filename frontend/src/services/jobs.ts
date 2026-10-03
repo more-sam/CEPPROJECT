@@ -24,6 +24,25 @@ export async function listJobs(query: JobQuery = {}): Promise<Paginated<Opportun
   return data
 }
 
+/**
+ * Opportunities whose stored `status` is `open`.
+ *
+ * The filter lives on the server, so this can only ever return rows the
+ * database actually marks as open - it is not a client-side guess.
+ */
+export async function listOpenJobs(
+  query: JobQuery = {},
+): Promise<Paginated<OpportunityCard>> {
+  const params: Record<string, string | number> = {}
+  for (const [key, value] of Object.entries(query)) {
+    if (value === undefined || value === null || value === '') continue
+    params[key] = value as string | number
+  }
+
+  const { data } = await api.get<Paginated<OpportunityCard>>('/jobs/open', { params })
+  return data
+}
+
 export async function getJob(jobId: number): Promise<OpportunityDetail> {
   const { data } = await api.get<OpportunityDetail>(`/jobs/${jobId}`)
   return data
