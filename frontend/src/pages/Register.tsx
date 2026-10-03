@@ -1,7 +1,8 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 
-import { AuthShell } from '../components/layout/AuthShell'
+import { SkillBridgeLogo } from '../components/ui/SkillBridgeLogo'
+import { AiOrb } from '../components/ui/AiOrb'
 import { Button } from '../components/ui/Button'
 import { InlineError } from '../components/ui/ErrorState'
 import { TextField } from '../components/ui/Field'
@@ -75,72 +76,116 @@ export default function Register() {
   }
 
   return (
-    <AuthShell
-      title="Create your account"
-      subtitle="Start by telling us about your studies. It takes a minute."
-      footer={
-        <>
-          Already registered?{' '}
-          <Link to="/login" className="font-medium text-brand-300 hover:text-brand-200">
-            Sign in
+    <div className="grid min-h-dvh lg:grid-cols-2">
+      {/* Brand side - decorative, hidden from assistive tech. */}
+      <aside
+        className="relative hidden flex-col justify-between border-r border-white/8 p-10 lg:flex bg-ink-950/50"
+        aria-hidden="true"
+      >
+        <Link to="/" className="flex items-center gap-2" aria-label="SkillBridge AI home">
+          <SkillBridgeLogo size={24} />
+        </Link>
+
+        <div className="flex flex-col items-center gap-6">
+          <div className="sb-float">
+            <AiOrb size={220} />
+          </div>
+          <div className="text-center">
+            <p className="font-display text-lg font-medium leading-snug text-white">
+              Create your account
+            </p>
+            <p className="mt-2 max-w-sm text-center text-xs leading-relaxed text-slate-500">
+              Start by telling us about your studies. It takes a minute.
+            </p>
+          </div>
+
+          <p className="text-xs text-slate-600">
+            SkillBridge Compatibility is a skill-alignment indicator, not a hiring
+            prediction.
+          </p>
+        </div>
+      </aside>
+
+      <main className="flex items-center justify-center px-5 py-12">
+        <div className="w-full max-w-sm">
+          <Link
+            to="/"
+            className="mb-8 inline-flex items-center gap-2 font-display text-sm font-semibold text-white lg:hidden"
+            aria-label="SkillBridge AI home"
+          >
+            <SkillBridgeLogo size={22} />
           </Link>
-        </>
-      }
-    >
-      <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4" noValidate>
-        {error && <InlineError message={error} />}
 
-        <TextField
-          id="full_name"
-          label="Full name"
-          autoComplete="name"
-          value={fullName}
-          onChange={(event) => setFullName(event.target.value)}
-          placeholder="Alex Sharma"
-        />
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-white">
+            Create your account
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-400">Start by telling us about your studies. It takes a minute.</p>
 
-        <TextField
-          id="email"
-          label="Email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@college.edu"
-        />
+          <div className="mt-7 space-y-4">
+            <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4" noValidate>
+              {error && <InlineError message={error} />}
 
-        <TextField
-          id="password"
-          label="Password"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="At least 8 characters"
-        />
+              <TextField
+                id="full_name"
+                label="Full name"
+                autoComplete="name"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder="Alex Sharma"
+              />
 
-        <TextField
-          id="confirm"
-          label="Confirm password"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={confirm}
-          onChange={(event) => setConfirm(event.target.value)}
-          placeholder="Repeat your password"
-        />
+              <TextField
+                id="email"
+                label="Email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@college.edu"
+              />
 
-        <Button type="submit" fullWidth loading={submitting}>
-          Create account
-        </Button>
-      </form>
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="At least 8 characters"
+              />
 
-      <p className="text-[11px] leading-relaxed text-slate-500">
-        Your resume and profile data are stored privately against your account and are
-        never publicly accessible.
-      </p>
-    </AuthShell>
+              <TextField
+                id="confirm"
+                label="Confirm password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirm}
+                onChange={(event) => setConfirm(event.target.value)}
+                placeholder="Repeat your password"
+              />
+
+              <Button type="submit" fullWidth loading={submitting}>
+                Create account
+              </Button>
+            </form>
+
+            <p className="text-[11px] leading-relaxed text-slate-500">
+              Your resume and profile data are stored privately against your account and are
+              never publicly accessible.
+            </p>
+          </div>
+
+          <div className="mt-6 text-center text-sm text-slate-400">
+            Already registered?{' '}
+            <Link to="/login" className="font-medium text-brand-300 hover:text-brand-200">
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
   )
 }

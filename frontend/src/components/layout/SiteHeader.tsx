@@ -10,13 +10,22 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5">
-        <Link to="/" className="flex items-center gap-2.5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3.5">
+        <Link to="/" className="flex items-center gap-2.5" aria-label="SkillBridge AI home">
           <SkillBridgeLogo size={28} />
-          <span className="font-display text-sm font-semibold tracking-tight text-white">
-            SkillBridge <span className="text-brand-300">AI</span>
-          </span>
         </Link>
+
+        <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+          <Link to="/opportunities" className="text-xs font-medium text-slate-400 hover:text-white transition-colors">
+            Opportunities
+          </Link>
+          <Link to="/dashboard" className="text-xs font-medium text-slate-400 hover:text-white transition-colors">
+            Dashboard
+          </Link>
+          <Link to="/assistant" className="text-xs font-medium text-slate-400 hover:text-white transition-colors">
+            AI Assistant
+          </Link>
+        </nav>
 
         <div className="flex items-center gap-3">
           <span className="hidden sm:block">
@@ -25,7 +34,7 @@ export function SiteHeader() {
 
           {status === 'authenticated' ? (
             <Link to="/dashboard">
-              <Button size="sm">Open dashboard</Button>
+              <Button size="sm" variant="secondary">Open dashboard</Button>
             </Link>
           ) : (
             <div className="flex items-center gap-2">
