@@ -1,21 +1,19 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import { AdaptiveLayout } from './components/layout/AdaptiveLayout'
 import { AmbientBackdrop } from './components/layout/AmbientBackdrop'
-import { AppLayout } from './components/layout/AppLayout'
+import { AppShell } from './components/layout/AppShell'
 import { ContentLoader } from './components/layout/PageLoader'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
 /**
- * Routes are code-split per page (spec §43).
+ * Routes are code-split per page.
  *
  * The landing page, sign-in and sign-up stay eager because they are the first
  * paint for most visitors and are small. Everything else - and in particular the
- * chart-heavy dashboard and progress pages - loads on demand, so a visitor who
- * never signs in never downloads that code.
+ * chart-heavy dashboard and progress pages - loads on demand.
  */
 const AssessmentTake = lazy(() => import('./pages/AssessmentTake'))
 const Assessments = lazy(() => import('./pages/Assessments'))
@@ -38,7 +36,7 @@ const SkillGap = lazy(() => import('./pages/SkillGap'))
  * Application routes.
  *
  * - Public: landing, sign in, sign up.
- * - Adaptive: opportunity browsing works with or without an account.
+ * - Browsable: opportunity browsing works with or without an account.
  * - Protected: everything else, rendered inside the authenticated shell.
  */
 export default function App() {
@@ -77,40 +75,38 @@ export default function App() {
           }
         />
 
-        {/* Browsable signed in or out */}
+        {/* Browsable signed in or out - using AdaptiveLayout equivalent */}
         <Route
           path="/opportunities"
           element={
-            <AdaptiveLayout>
+            <Suspense fallback={<ContentLoader />}>
               <Opportunities />
-            </AdaptiveLayout>
+            </Suspense>
           }
         />
         <Route
           path="/opportunities/:jobId"
           element={
-            <AdaptiveLayout>
+            <Suspense fallback={<ContentLoader />}>
               <OpportunityDetails />
-            </AdaptiveLayout>
+            </Suspense>
           }
         />
         {/* Company record - browsable signed in or out. */}
         <Route
           path="/companies/:companyId"
           element={
-            <AdaptiveLayout>
-              <Suspense fallback={<ContentLoader />}>
-                <CompanyDetails />
-              </Suspense>
-            </AdaptiveLayout>
+            <Suspense fallback={<ContentLoader />}>
+              <CompanyDetails />
+            </Suspense>
           }
         />
 
-        {/* Authenticated app */}
+        {/* Authenticated app - uses new AppShell */}
         <Route
           element={
             <ProtectedRoute>
-              <AppLayout />
+              <AppShell />
             </ProtectedRoute>
           }
         >

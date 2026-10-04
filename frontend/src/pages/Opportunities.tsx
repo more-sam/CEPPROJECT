@@ -1,4 +1,4 @@
-import { SearchX } from 'lucide-react'
+import { SearchX, ChevronDown, Filter, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
@@ -57,11 +57,7 @@ export default function Opportunities() {
   const [search, setSearch] = useState(filters.q ?? '')
   const [savingId, setSavingId] = useState<number | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
-
-  // The prominent "Open Now" toggle. When on, every other `status` selection
-  // is overridden by `open`, so the toggle reads as an honest filter over
-  // stored data rather than a guess about live vacancies.
-  const openOnly = filters.status === 'open'
+  const [showFilters, setShowFilters] = useState(false)
 
   // Debounce the free-text box so typing does not hammer the API.
   useEffect(() => {
@@ -98,6 +94,17 @@ export default function Opportunities() {
   const items = jobs.data?.items ?? []
   const meta = jobs.data?.meta
 
+  const activeFilterCount = [
+    filters.location,
+    filters.employment_type,
+    filters.work_type,
+    filters.experience_level,
+    filters.skill,
+    filters.status,
+    filters.company_id,
+    filters.min_compatibility && filters.min_compatibility > 0,
+  ].filter(Boolean).length
+
   const handleToggleSave = async (jobId: number, nextSaved: boolean) => {
     setSavingId(jobId)
     setSaveError(null)
@@ -122,35 +129,99 @@ export default function Opportunities() {
 
   const goToPage = (page: number) => setFilters((current) => ({ ...current, page }))
 
+  const resetFilters = () => setFilters({ ...INITIAL_FILTERS })
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
+      {/* Page Header with Actions */}
       <PageHeader
         title="Opportunities"
-        subtitle="Internships and entry-level roles scored against your skills."
+        subtitle="Discover internships and entry-level roles scored against your skills."
         actions={
-          <select
-            aria-label="Sort opportunities"
-            value={filters.sort ?? 'compatibility'}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                sort: event.target.value as JobQuery['sort'],
-                page: 1,
-              }))
-            }
-            className="rounded-xl border border-white/10 bg-ink-850 px-3 py-2 text-xs text-slate-300 focus:border-brand-400/40 focus:outline-none"
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Mobile filter toggle */}
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className={`lg:hidden flex items-center gap-2 px-3 py-2 rounded-xl border transition ${
+                showFilters
+                  ? 'border-brand-400/30 bg-brand-500/10 text-brand-300'
+                  : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
+              }`}
+              aria-expanded={showFilters}
+              aria-controls="filter-panel"
+            >
+              <Filter className="h-4 w-4" />
+              <span className="font-medium text-xs">Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-brand-500 text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            {/* Sort dropdown */}
+            <div className="relative">
+              <select
+                aria-label="Sort opportunities"
+                value={filters.sort ?? 'compatibility'}
+                onChange={(event) =>
+                  setFilters((current) => ({
+                    ...current,
+                    sort: event.target.value as JobQuery['sort'],
+                    page: 1,
+                  }))
+                }
+                className="appearance-none rounded-xl border border-white/10 bg-surface-overlay px-3 py-2 text-xs text-slate-300 focus:border-brand-400/40 focus:outline-none pr-8 cursor-pointer"
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
+            </div>
+
+            {/* Open Now Toggle - Desktop */}
+            <div className="hidden lg:flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setFilters((current) => ({
+                    ...current,
+                    status: current.status === 'open' ? undefined : 'open',
+                    page: 1,
+                  }))
+                }
+                aria-pressed={filters.status === 'open'}
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition ${
+                  filters.status === 'open'
+                    ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+                    : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
+                }`}
+              >
+                <span
+                  className={`h-2 w-2 rounded-full ${filters.status === 'open' ? 'bg-emerald-400' : 'bg-slate-500'}`}
+                  aria-hidden="true"
+                />
+                Open now only
+              </button>
+              <span className="text-[11px] text-text-muted">only status = open</span>
+            </div>
+          </div>
         }
       />
 
       <div className="grid gap-5 lg:grid-cols-[260px_1fr]">
-        <div className="space-y-4">
+        {/* Sidebar Filters */}
+        <aside
+          id="filter-panel"
+          className={`space-y-4 transition-all duration-300 ease-out ${
+            showFilters ? 'block' : 'hidden lg:block'
+          }`}
+        >
+          {/* Search */}
           <SearchBar
             value={search}
             onChange={setSearch}
@@ -158,10 +229,11 @@ export default function Opportunities() {
             placeholder="Search jobs, companies or skills"
           />
 
+          {/* Skill Dropdown */}
           <div className="sb-glass rounded-2xl p-4">
             <label
               htmlFor="filter-skill"
-              className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-slate-500"
+              className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-text-muted"
             >
               Required skill
             </label>
@@ -175,7 +247,7 @@ export default function Opportunities() {
                   page: 1,
                 }))
               }
-              className="w-full rounded-xl border border-white/10 bg-ink-850 px-3 py-2 text-xs text-slate-300 focus:border-brand-400/40 focus:outline-none"
+              className="w-full rounded-xl border border-surface-border bg-surface-base px-3 py-2 text-xs text-text-primary focus:border-brand-400/40 focus:outline-none"
             >
               <option value="">Any skill</option>
               {(catalogue.data ?? []).map((skill) => (
@@ -186,6 +258,7 @@ export default function Opportunities() {
             </select>
           </div>
 
+          {/* Filter Panel */}
           <FilterPanel
             options={filterOptions.data}
             value={filters}
@@ -193,9 +266,9 @@ export default function Opportunities() {
             showCompatibility={signedIn}
           />
 
-          {/* One-tap "show only what is genuinely open for applications". */}
-          <div className="sb-glass rounded-2xl p-4">
-            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          {/* Open Now Toggle - Mobile */}
+          <div className="sb-glass rounded-2xl p-4 lg:hidden">
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-text-muted">
               Application status
             </p>
             <div className="flex flex-wrap items-center gap-2">
@@ -208,29 +281,48 @@ export default function Opportunities() {
                     page: 1,
                   }))
                 }
-                aria-pressed={openOnly}
+                aria-pressed={filters.status === 'open'}
                 className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition ${
-                  openOnly
+                  filters.status === 'open'
                     ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
                     : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
                 }`}
               >
                 <span
-                  className={`h-2 w-2 rounded-full ${openOnly ? 'bg-emerald-400' : 'bg-slate-500'}`}
+                  className={`h-2 w-2 rounded-full ${filters.status === 'open' ? 'bg-emerald-400' : 'bg-slate-500'}`}
                   aria-hidden="true"
                 />
                 Open now only
               </button>
-              <span className="text-[11px] text-slate-500">only status = open</span>
+              <span className="text-[11px] text-text-muted">only status = open</span>
             </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
+          {/* Active filters / reset */}
+          {activeFilterCount > 0 && (
+            <div className="flex items-center justify-between pt-2 border-t border-surface-border">
+              <p className="text-xs font-medium text-text-muted">
+                {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetFilters}
+                icon={<X className="h-3.5 w-3.5" />}
+              >
+                Clear all
+              </Button>
+            </div>
+          )}
+        </aside>
+
+        {/* Main Content */}
+        <div className="space-y-4 min-w-0">
           {saveError && (
-            <p role="alert" className="text-xs text-rose-300">
+            <div className="flex items-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs text-rose-200 animate-fade-in">
+              <span className="shrink-0" role="status">!</span>
               {saveError}
-            </p>
+            </div>
           )}
 
           {jobs.loading && <SkeletonGrid count={6} />}
@@ -245,7 +337,7 @@ export default function Opportunities() {
               title="No opportunities match these filters"
               description="Try widening your search, clearing a filter, or lowering the minimum compatibility."
               action={
-                <Button variant="secondary" onClick={() => setFilters({ ...INITIAL_FILTERS })}>
+                <Button variant="secondary" onClick={resetFilters}>
                   Reset filters
                 </Button>
               }
@@ -254,12 +346,40 @@ export default function Opportunities() {
 
           {!jobs.loading && !jobs.error && items.length > 0 && (
             <>
-              <p className="text-xs text-slate-500">
-                Showing {items.length} of {meta?.total ?? items.length} opportunities
-                <span className="ml-2 rounded-full bg-white/6 px-2 py-0.5 text-[10px] text-slate-400">
-                  Demo/seed opportunity data
-                </span>
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-text-muted">
+                  Showing {items.length} of {meta?.total ?? items.length} opportunities
+                  <span className="ml-2 rounded-full bg-white/6 px-2 py-0.5 text-[10px] text-text-muted">
+                    Demo/seed opportunity data
+                  </span>
+                </p>
+
+                {/* Open Now Toggle - Mobile inline */}
+                <div className="lg:hidden">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFilters((current) => ({
+                        ...current,
+                        status: current.status === 'open' ? undefined : 'open',
+                        page: 1,
+                      }))
+                    }
+                    aria-pressed={filters.status === 'open'}
+                    className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition ${
+                      filters.status === 'open'
+                        ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+                        : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${filters.status === 'open' ? 'bg-emerald-400' : 'bg-slate-500'}`}
+                      aria-hidden="true"
+                    />
+                    Open now only
+                  </button>
+                </div>
+              </div>
 
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {items.map((opportunity: OpportunityCardType) => (
@@ -289,7 +409,7 @@ export default function Opportunities() {
                   >
                     Previous
                   </Button>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-text-muted">
                     Page {meta.page} of {meta.total_pages}
                   </span>
                   <Button
@@ -307,7 +427,7 @@ export default function Opportunities() {
 
           {!signedIn && (
             <div className="sb-glass flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-text-muted">
                 Sign in and upload a resume to see your SkillBridge Compatibility on every
                 opportunity.
               </p>
@@ -323,7 +443,6 @@ export default function Opportunities() {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
