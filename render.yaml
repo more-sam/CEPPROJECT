@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: skillbridge-api
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health/ready
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: true
+      - key: CORS_ORIGINS
+        value: https://YOUR_FRONTEND_DOMAIN
+      - key: SEED_DEMO_USER
+        value: false
+      - key: ENABLE_SEMANTIC_MATCHING
+        value: true
+      - key: DATA_DIR
+        value: /data
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: DATABASE_URL
+        sync: false # Set to your managed Postgres URL in Render
+      - key: AI_PROVIDER
+        value: none
+      - key: SIEVE_API_KEY
+        sync: false
+    buildCommand: ""
+    startCommand: ""
+  - type: web
+    name: skillbridge-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://skillbridge-api.onrender.com # Update to match your API URL
+
+databases:
+  - name: skillbridge-db
+    plan: free
+    postgresMajorVersion: 17
