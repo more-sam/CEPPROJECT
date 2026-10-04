@@ -21,7 +21,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
         aria-hidden="true"
       >
         <Link to="/" className="flex items-center gap-2" aria-label="SkillBridge AI home">
-          <SkillBridgeLogo size={24} />
+          <SkillBridgeLogo size={30} variant="full" animated={false} />
         </Link>
 
         <div className="flex flex-col items-center gap-6">

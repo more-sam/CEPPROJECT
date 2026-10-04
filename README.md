@@ -288,6 +288,14 @@ take precedence, so production can inject secrets without any file.
 | `AI_PROVIDER` | `none` / `openai` / `openai-compatible` | `none` |
 | `AI_API_KEY` | Provider key — **optional** | empty |
 | `AI_MODEL` / `AI_BASE_URL` | Model name, custom endpoint | `gpt-4o-mini`, empty |
+| `SIEVE_API_KEY` | Sieve scrape API key — **optional, server-side only** | empty |
+| `SIEVE_BASE_URL` | Sieve API base URL | `https://scrape.usesieve.com` |
+
+**The application is fully functional with `SIEVE_API_KEY` empty.** Every sieve
+route reports `not configured` and nothing else changes. Obtain a key with
+`docker compose exec backend python -m app.sieve_login` (a browser approval by
+the account owner) or from the Sieve dashboard under Settings → API keys. The
+key is read from the environment only and is never sent to the browser.
 
 Frontend variables live in `frontend/.env` (see `frontend/.env.example`):
 

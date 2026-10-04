@@ -73,6 +73,12 @@ from app.schemas.roadmap import (
     RoadmapItemUpdateRequest,
     RoadmapResponse,
 )
+from app.schemas.scrape import (
+    ScrapeCapabilities,
+    ScrapeFileOut,
+    ScrapeJobResponse,
+    ScrapeStartRequest,
+)
 
 __all__ = [
     "ActivityItem",
@@ -120,6 +126,10 @@ __all__ = [
     "RoadmapItemUpdateRequest",
     "RoadmapResponse",
     "SavedJobResponse",
+    "ScrapeCapabilities",
+    "ScrapeFileOut",
+    "ScrapeJobResponse",
+    "ScrapeStartRequest",
     "SemanticMatchInfo",
     "SkillCatalogueItem",
     "SkillGapItem",

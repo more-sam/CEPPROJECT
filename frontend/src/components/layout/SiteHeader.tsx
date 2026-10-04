@@ -10,9 +10,9 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3.5">
+      <div className="mx-auto flex w-full max-w-[1550px] items-center justify-between gap-4 px-[5vw] py-3">
         <Link to="/" className="flex items-center gap-2.5" aria-label="SkillBridge AI home">
-          <SkillBridgeLogo size={28} />
+                <SkillBridgeLogo size={28} variant="full" animated={false} />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">

@@ -88,6 +88,23 @@ class Settings(BaseSettings):
     ai_model: str = "gpt-4o-mini"
     ai_base_url: str = ""
 
+    # ---------- Sieve scrape API (optional, SERVER-SIDE ONLY) ----------
+    # The key has full account access and no scopes, so it is read only from the
+    # environment, never sent to the browser, and never written to a log. When it
+    # is empty every sieve feature reports "not configured" and the rest of the
+    # application is completely unaffected.
+    sieve_api_key: str = ""
+    sieve_base_url: str = "https://scrape.usesieve.com"
+    # Poll cadence for an in-progress run: start at 5s and back off to ~30s.
+    # Runs take minutes, so the ceiling stays low rather than timing out.
+    sieve_poll_initial_seconds: float = 5.0
+    sieve_poll_max_seconds: float = 30.0
+    sieve_request_timeout_seconds: float = 30.0
+    # Bounded retry for idempotent GETs only. POST /api/scrapes is never retried:
+    # an accepted call spends credits and the first attempt may have succeeded.
+    sieve_get_retry_attempts: int = 3
+    sieve_get_retry_backoff_seconds: float = 1.0
+
     @field_validator("cors_origins", "allowed_resume_extensions", mode="before")
     @classmethod
     def _split_comma_separated(cls, value: object) -> object:
@@ -107,6 +124,15 @@ class Settings(BaseSettings):
     def llm_enabled(self) -> bool:
         """True only when a provider AND a key are configured."""
         return self.ai_provider != "none" and bool(self.ai_api_key.strip())
+
+    @property
+    def sieve_enabled(self) -> bool:
+        """True only when a Sieve API key is configured.
+
+        Every sieve feature is gated on this; with the key absent the application
+        behaves exactly as it did before sieve was integrated.
+        """
+        return bool(self.sieve_api_key.strip())
 
     def data_path(self, *parts: str) -> Path:
         """Resolve a file inside the shared data directory.

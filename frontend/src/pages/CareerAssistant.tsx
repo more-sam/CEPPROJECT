@@ -1,11 +1,15 @@
 import { Send, Sparkles } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { AiOrb } from '../components/ui/AiOrb'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { InlineError } from '../components/ui/ErrorState'
 import { PageHeader } from '../components/ui/PageHeader'
+import { Reveal } from '../motion/Reveal'
+import { StreamText } from '../motion/StreamText'
+import { ease } from '../motion/tokens'
 import { getApiErrorMessage } from '../services/api'
 import { fetchAssistantCapabilities, sendChatMessage, type ChatTurn } from '../services/assistant'
 import type { ChatSource } from '../types'
@@ -98,25 +102,30 @@ export default function CareerAssistant() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="AI career assistant"
-        subtitle="Grounded in your profile, skills, roadmap and assessment results."
-        actions={
-          llmEnabled !== null && (
-            <Badge tone={llmEnabled ? 'success' : 'brand'}>
-              {llmEnabled ? 'LLM mode' : 'Local reasoning mode'}
-            </Badge>
-          )
-        }
-      />
+      <Reveal amount={0.12}>
+        <PageHeader
+          title="AI career assistant"
+          subtitle="Grounded in your profile, skills, roadmap and assessment results."
+          actions={
+            llmEnabled !== null && (
+              <Badge tone={llmEnabled ? 'success' : 'brand'}>
+                {llmEnabled ? 'LLM mode' : 'Local reasoning mode'}
+              </Badge>
+            )
+          }
+        />
+      </Reveal>
 
       {capabilityNote && (
-        <p className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3 text-[11px] leading-relaxed text-slate-500">
-          {capabilityNote}
-        </p>
+        <Reveal amount={0.14} delay={0.06}>
+          <p className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3 text-[11px] leading-relaxed text-slate-500">
+            {capabilityNote}
+          </p>
+        </Reveal>
       )}
 
-      <section className="sb-glass flex min-h-[26rem] flex-col rounded-2xl p-5">
+      <Reveal amount={0.12} delay={0.08}>
+        <section className="sb-glass flex min-h-[26rem] flex-col rounded-2xl p-5">
         <div className="flex-1 space-y-4 overflow-y-auto pr-1">
           {messages.length === 0 && (
             <div className="flex flex-col items-center gap-4 py-10 text-center">
@@ -135,78 +144,110 @@ export default function CareerAssistant() {
             </div>
           )}
 
-          {messages.map((message) =>
-            message.role === 'user' ? (
-              <div key={message.id} className="flex justify-end">
-                <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-brand-500/20 px-4 py-2.5 text-sm text-white ring-1 ring-brand-400/25">
-                  {message.content}
-                </div>
-              </div>
-            ) : (
-              <div key={message.id} className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-aqua-500">
-                  <Sparkles className="h-3.5 w-3.5 text-white" />
-                </span>
-                <div className="max-w-[85%] space-y-2">
-                  <div className="rounded-2xl rounded-tl-sm border border-white/8 bg-white/5 px-4 py-3">
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200">
-                      {message.content}
-                    </p>
+          <AnimatePresence initial={false}>
+            {messages.map((message) =>
+              message.role === 'user' ? (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 8, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.22, ease: ease.out }}
+                  className="flex justify-end"
+                >
+                  <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-brand-500/20 px-4 py-2.5 text-sm text-white ring-1 ring-brand-400/25">
+                    {message.content}
                   </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.26, ease: ease.out }}
+                  className="flex items-start gap-3"
+                >
+                  <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-aqua-500">
+                    <Sparkles className="h-3.5 w-3.5 text-white" />
+                  </span>
+                  <div className="max-w-[85%] space-y-2">
+                    <div className="rounded-2xl rounded-tl-sm border border-white/8 bg-white/5 px-4 py-3">
+                      <StreamText text={message.content} speed={13} className="whitespace-pre-line text-sm leading-relaxed text-slate-200" />
+                    </div>
 
-                  {(message.sources?.length ?? 0) > 0 && (
-                    <ul className="flex flex-wrap gap-1.5">
-                      {message.sources?.map((source, index) => (
-                        <li key={index}>
-                          <span
-                            title={source.detail}
-                            className="inline-flex rounded-full bg-white/6 px-2.5 py-1 text-[10px] text-slate-400 ring-1 ring-white/10"
-                          >
-                            {source.label}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                    {(message.sources?.length ?? 0) > 0 && (
+                      <ul className="flex flex-wrap gap-1.5">
+                        {message.sources?.map((source, index) => (
+                          <li key={index}>
+                            <span
+                              title={source.detail}
+                              className="inline-flex rounded-full bg-white/6 px-2.5 py-1 text-[10px] text-slate-400 ring-1 ring-white/10"
+                            >
+                              {source.label}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
-                  {message.mode === 'local' && (
-                    <p className="text-[10px] text-slate-600">
-                      Answered with on-device reasoning from your stored data.
-                    </p>
-                  )}
-                </div>
-              </div>
-            ),
-          )}
+                    {message.mode === 'local' && (
+                      <p className="text-[10px] text-slate-600">
+                        Answered with on-device reasoning from your stored data.
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              ),
+            )}
+          </AnimatePresence>
 
-          {sending && (
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Sparkles className="h-3.5 w-3.5 animate-pulse text-brand-300" />
-              Thinking…
-            </div>
-          )}
+          <AnimatePresence>
+            {sending && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.14 }}
+                className="flex items-center gap-2 text-xs text-slate-500"
+              >
+                <Sparkles className="h-3.5 w-3.5 animate-pulse text-brand-300" />
+                Thinking…
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div ref={endRef} />
         </div>
 
-        {error && (
-          <div className="mt-4">
-            <InlineError message={error} />
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.16 }}
+              className="mt-4"
+            >
+              <InlineError message={error} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {prompts.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
-            {prompts.slice(0, 5).map((prompt) => (
-              <button
+            {prompts.slice(0, 5).map((prompt, idx) => (
+              <motion.button
                 key={prompt}
                 type="button"
                 disabled={sending}
                 onClick={() => void send(prompt)}
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ delay: idx * 0.04, duration: 0.18, ease: ease.out }}
                 className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300 transition hover:border-brand-400/30 hover:text-white disabled:opacity-50"
               >
                 {prompt}
-              </button>
+              </motion.button>
             ))}
           </div>
         )}
@@ -239,7 +280,8 @@ export default function CareerAssistant() {
             Send
           </Button>
         </form>
-      </section>
+        </section>
+      </Reveal>
     </div>
   )
 }

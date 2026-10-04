@@ -1,17 +1,26 @@
+import { motion, useReducedMotion } from 'framer-motion'
+import {
+  ArrowRight,
+  Briefcase,
+  Building2,
+  Compass,
+  GitBranch,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Upload,
+  Zap,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Building2, Briefcase, Target, TrendingUp, Upload, Sparkles, Compass, Zap, GitBranch } from 'lucide-react'
 
+import { HeroCareerNetwork } from '../components/HeroCareerNetwork'
 import { SkillBridgeLogo } from '../components/ui/SkillBridgeLogo'
+import { Reveal, Stagger, StaggerItem } from '../motion/Reveal'
+import { usePrefersReducedMotion } from '../motion/usePrefersReducedMotion'
+import { useCountUp } from '../hooks/useCountUp'
+import { duration, ease } from '../motion/tokens'
 import { fetchPlatformStats, type PlatformStats } from '../services/health'
-
-interface HeroSkillNode {
-  name: string
-  x: number
-  y: number
-  category: string
-  state: 'owned' | 'learning' | 'gap'
-}
 
 const FEATURES = [
   {
@@ -44,6 +53,10 @@ const PATHWAY = [
   { icon: Briefcase, label: 'Opportunities' },
 ] as const
 
+// ---------------------------------------------------------------------------
+// Stats band
+// ---------------------------------------------------------------------------
+
 function StatsBand() {
   const [stats, setStats] = useState<PlatformStats | null>(null)
 
@@ -54,9 +67,11 @@ function StatsBand() {
         if (!cancelled && data.status === 'ok') setStats(data)
       })
       .catch(() => {
-        /* stats are decorative */
+        /* decorative */
       })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   if (!stats) return null
@@ -69,163 +84,214 @@ function StatsBand() {
   ]
 
   return (
-    <section className="pb-16" aria-label="Platform statistics">
-      <div className="sb-glass rounded-2xl p-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {items.map(({ icon: Icon, value, label }) => (
-          <div key={label} className="flex items-center gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/20">
-              <Icon className="h-4 w-4" />
-            </span>
-            <div>
-              <p className="font-display text-xl font-semibold tabular-nums text-white sm:text-2xl">
-                {value.toLocaleString()}
-              </p>
-              <p className="text-xs font-medium uppercase tracking-wider text-text-muted">{label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+    <Reveal amount={0.22} className="pb-16" as="section">
+      <Stagger className="sb-glass grid gap-4 rounded-2xl p-6 sm:grid-cols-4" step={0.07}>
+        {items.map(({ icon: Icon, value, label }) => {
+          return (
+            <StaggerItem key={label} className="flex items-center gap-3">
+              <StatCell Icon={Icon} value={value} label={label} />
+            </StaggerItem>
+          )
+        })}
+      </Stagger>
+    </Reveal>
   )
 }
 
-function HeroSkillNetwork() {
-  const skills: HeroSkillNode[] = [
-    { name: 'Python', x: 15, y: 45, category: 'backend', state: 'owned' },
-    { name: 'React', x: 85, y: 25, category: 'frontend', state: 'owned' },
-    { name: 'SQL', x: 35, y: 75, category: 'data', state: 'owned' },
-    { name: 'Git', x: 65, y: 15, category: 'tools', state: 'owned' },
-    { name: 'Docker', x: 90, y: 60, category: 'infra', state: 'learning' },
-    { name: 'AWS', x: 10, y: 60, category: 'infra', state: 'learning' },
-    { name: 'TypeScript', x: 55, y: 40, category: 'frontend', state: 'owned' },
-    { name: 'Machine Learning', x: 30, y: 30, category: 'ai', state: 'gap' },
-    { name: 'REST APIs', x: 75, y: 55, category: 'backend', state: 'owned' },
-    { name: 'PostgreSQL', x: 45, y: 85, category: 'data', state: 'gap' },
-  ]
-
+function StatCell({
+  Icon,
+  value,
+  label,
+}: {
+  Icon: typeof GitBranch
+  value: number
+  label: string
+}) {
+  // Count-up is paused automatically when the tab is hidden and under reduced motion.
+  const animated = useCountUp(value, 900)
   return (
-    <svg
-      className="absolute inset-0 pointer-events-none"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="skill-line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="#22d3ee" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.4" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      {/* Connections to center (AI hub) */}
-      {skills.map((skill) => (
-        <line
-          key={skill.name}
-          x1={skill.x}
-          y1={skill.y}
-          x2={50}
-          y2={50}
-          stroke="url(#skill-line-gradient)"
-          strokeWidth="0.5"
-          strokeLinecap="round"
-          opacity="0.4"
-          filter="url(#glow)"
-        />
-      ))}
-      {/* Skill nodes */}
-      {skills.map((skill, i) => (
-        <g key={skill.name} className="animate-slide-up" style={{ animationDelay: `${i * 0.08}s` }}>
-          <circle
-            cx={skill.x}
-            cy={skill.y}
-            r="3.5"
-            fill="url(#skill-line-gradient)"
-            opacity="0.9"
-            filter="url(#glow)"
-          />
-          <text
-            x={skill.x}
-            y={skill.y - 8}
-            textAnchor="middle"
-            fontSize="5"
-            fontFamily="ui-sans-serif, system-ui, sans-serif"
-            fontWeight="500"
-            fill="#94a3b8"
-            opacity="0.7"
-          >
-            {skill.name}
-          </text>
-        </g>
-      ))}
-    </svg>
+    <>
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/20">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="font-display text-xl font-semibold tabular-nums text-white sm:text-2xl">
+          {Math.round(animated).toLocaleString()}
+        </p>
+        <p className="text-xs font-medium uppercase tracking-wider text-text-muted">{label}</p>
+      </div>
+    </>
   )
 }
+
+// ---------------------------------------------------------------------------
+// Landing
+// ---------------------------------------------------------------------------
 
 export default function Landing() {
+  const reduced = usePrefersReducedMotion()
+  const reducedMotion = useReducedMotion()
+
   return (
     <div className="relative min-h-screen">
-      {/* Background atmospheric layer */}
-      <div className="fixed inset-0 bg-mesh pointer-events-none -z-10" aria-hidden="true" />
+      {/* Atmospheric backdrop is rendered globally in App.tsx; a faint mesh wash
+          here provides extra depth behind the hero without another full layer. */}
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-mesh opacity-80" aria-hidden="true" />
 
-      <main className="mx-auto max-w-7xl px-5">
-        {/* ---------------- Hero ---------------- */}
-        <section className="relative grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
-          <div className="animate-slide-up" style={{ animationDelay: '0ms' }}>
-            <p className="text-xs font-medium uppercase tracking-wider text-cyan-400/80 flex items-center gap-2 mt-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+      {/* Header */}
+      <motion.header
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: reduced ? 0.001 : 0.32, ease: 'easeOut' }}
+        className="sticky top-0 z-30 border-b border-white/5 bg-surface-base/60 backdrop-blur-xl"
+      >
+          <div className="mx-auto flex w-[90vw] max-w-[1600px] items-center justify-between gap-4 px-[6vw] md:px-[7vw] lg:px-[8vw] xl:px-[9vw] py-3.5">
+              <Link to="/" className="flex items-center gap-2.5" aria-label="SkillBridge AI home">
+                <SkillBridgeLogo size={28} variant="full" animated={false} />
+              </Link>
+
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Main navigation">
+            <Link
+              to="/opportunities"
+              className="text-xs font-medium text-slate-400 transition-colors hover:text-white"
+            >
+              Opportunities
+            </Link>
+            <Link
+              to="/dashboard"
+              className="text-xs font-medium text-slate-400 transition-colors hover:text-white"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/assistant"
+              className="text-xs font-medium text-slate-400 transition-colors hover:text-white"
+            >
+              AI Assistant
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/login"
+              className="px-3 py-2 text-xs font-medium text-slate-300 transition hover:text-white"
+            >
+              Sign in
+            </Link>
+            <Link
+              to="/register"
+              className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-400 hover:to-brand-500"
+            >
+              Get started
+            </Link>
+          </div>
+        </div>
+      </motion.header>
+
+      <main className="mx-auto w-full max-w-[1550px] px-[5vw] lg:px-[5vw] xl:px-[5vw]">
+        {/* ---------------- Hero ----------------
+            The grid uses minmax(0, Nfr) rather than bare Nfr so a column can
+            never be forced wider than its track by its content's min-content
+            size. Combined with min-width:0 on both children this is what keeps
+            the document exactly one viewport wide at every size. */}
+        <section className="relative grid items-center gap-10 py-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-14 min-h-[calc(100vh-80px)] lg:py-0">
+          <div className="relative min-w-0 max-w-[640px]" style={{ zIndex: 10 }}>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: reducedMotion ? 0 : 0.08, duration: 0.28, ease: 'easeOut' }}
+              className="mt-4 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-cyan-400/85"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true">
+                <span className="block h-full w-full animate-pulse rounded-full bg-emerald-400" />
+              </span>
               AI Career Intelligence Platform
-            </p>
+            </motion.p>
 
-            <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-              <span className="sb-gradient-text">
+            {/* Headline: words reveal with a gentle stagger so the promise arrives
+                in beats rather than as a single wall of colour. */}
+            <motion.h1
+              className="mt-3 hidden lg:block font-display font-semibold leading-[1.06] tracking-tight text-[clamp(3rem,4.2vw,5rem)]"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: reducedMotion ? 0 : 0.08, delayChildren: 0.12 },
+                },
+              }}
+            >
+              {['Bridge the gap', 'between your skills', 'and real opportunities.'].map(
+                (line, i) => (
+                  <motion.span
+                    key={line}
+                    className="block bg-gradient-to-r from-indigo-300 via-violet-300 to-cyan-200 bg-clip-text text-transparent"
+                    variants={{
+                      hidden: { opacity: 0, y: reducedMotion ? 0 : 14 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] } },
+                    }}
+                    style={i > 0 ? { marginTop: '0.04em' } : {}}
+                  >
+                    {line}
+                  </motion.span>
+                ),
+              )}
+            </motion.h1>
+
+            {/* Mobile headline: no stagger variant, simpler layout. */}
+            <h1 className="mt-3 block lg:hidden font-display text-[2.2rem] font-semibold leading-[1.08] tracking-tight sm:text-[2.8rem]">
+              <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-cyan-200 bg-clip-text text-transparent">
                 Bridge the gap between your skills and real opportunities.
               </span>
             </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg">
-              Upload your resume to understand your skills, discover internships that
-              align with them, and follow a personalised roadmap for the gaps that
-              stand between you and your next role.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: reducedMotion ? 0 : 0.44, duration: 0.34, ease: 'easeOut' }}
+              className="mt-4 max-w-[620px] text-[15px] leading-relaxed text-text-secondary sm:text-base"
+            >
+              Upload your resume to understand your skills, discover internships that align with them,
+              and follow a personalised roadmap for the gaps that stand between you and your next role.
+            </motion.p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: reducedMotion ? 0 : 0.52, duration: 0.34, ease: 'easeOut' }}
+              className="mt-7 flex flex-wrap items-center gap-3"
+            >
               <Link
                 to="/register"
-                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-400 hover:to-brand-500 sb-lift"
+                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-400 hover:to-brand-500 active:scale-[0.98]"
               >
                 Analyze my resume
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </Link>
               <Link
                 to="/opportunities"
-                className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/50 px-5 py-3 text-sm font-semibold text-text-primary transition hover:bg-surface-elevated hover:border-brand-500/50 sb-lift"
+                className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/60 px-5 py-3 text-sm font-semibold text-text-primary transition hover:border-brand-500/45 hover:bg-surface-elevated active:scale-[0.98]"
               >
                 <Zap className="h-4 w-4" />
                 Explore opportunities
               </Link>
-            </div>
+            </motion.div>
 
-            <p className="mt-4 text-xs text-text-muted">
-              Free to use. Upload a PDF or DOCX resume and see your skills mapped to real
-              openings in under a minute.
-            </p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.72, duration: 0.32 }}
+              className="mt-3 text-xs text-text-muted"
+            >
+              Free to use. Upload a PDF or DOCX resume and see your skills mapped to real openings in
+              under a minute.
+            </motion.p>
           </div>
 
-          <div className="relative grid place-items-center">
-            <div className="relative animate-float">
-              <div className="relative" style={{ width: '400px', height: '400px' }}>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-500/20 via-violet-500/10 to-cyan-500/20 blur-[80px]" />
-                <div className="absolute inset-0 rounded-full border border-brand-500/20 bg-gradient-to-br from-brand-500/5 to-transparent" />
-                <HeroSkillNetwork />
-              </div>
-            </div>
+          {/* min-width:0 lets the track shrink; overflow stays visible so the
+              3D scene is not flattened by a clipping ancestor. */}
+          <div className="relative min-w-0 overflow-visible">
+            <HeroCareerNetwork />
           </div>
         </section>
 
@@ -233,143 +299,193 @@ export default function Landing() {
         <StatsBand />
 
         {/* ---------------- Compatibility example ---------------- */}
-        <section className="grid gap-6 pb-16 lg:grid-cols-2 lg:items-center">
-          <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+        <Reveal amount={0.18} className="grid gap-6 pb-16 lg:grid-cols-2 lg:items-center">
+          <div>
             <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               A transparent score, never a promise
             </h2>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-text-secondary">
-              <strong className="font-semibold text-white">SkillBridge Compatibility</strong>{' '}
-              measures how closely your identified skills line up with the skills a
-              role asks for. It is a similarity score - it is not a hiring
-              probability, and it never predicts whether you will be selected.
+              <strong className="font-semibold text-white">SkillBridge Compatibility</strong> measures how
+              closely your identified skills line up with the skills a role asks for. It is a similarity
+              score — it is not a hiring probability, and it never predicts whether you will be selected.
             </p>
           </div>
 
-          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <div className="sb-glass rounded-2xl p-6">
-              <div className="flex items-baseline justify-between">
-                <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
-                  SkillBridge Compatibility
-                </span>
-                <span className="font-display text-3xl font-semibold text-brand-300">82%</span>
-              </div>
+          <motion.div
+            className="sb-glass rounded-2xl p-6"
+            whileHover={reducedMotion ? undefined : { y: -3, scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 26, mass: 0.7 }}
+          >
+            <div className="flex items-baseline justify-between">
+              <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
+                SkillBridge Compatibility
+              </span>
+              <span className="font-display text-3xl font-semibold text-brand-300">82%</span>
+            </div>
 
-              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-surface-border">
-                <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-brand-500 to-cyan-400" />
-              </div>
+            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-surface-border">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-brand-500 to-cyan-400"
+                initial={{ width: 0 }}
+                whileInView={{ width: '82%' }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: duration.viz, ease: ease.out, delay: 0.2 }}
+              />
+            </div>
 
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Matched</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-white">
-                    {['Python', 'SQL', 'Git', 'REST APIs'].map((skill) => (
-                      <li key={skill} className="flex items-center gap-2">
-                        <span className="text-emerald-400">✓</span>
-                        {skill}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-amber-300/90">Skill gaps</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-text-muted">
-                    {['Docker', 'AWS'].map((skill) => (
-                      <li key={skill} className="flex items-center gap-2">
-                        <span className="text-amber-400/80">○</span>
-                        {skill}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Matched</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-white">
+                  {['Python', 'SQL', 'Git', 'REST APIs'].map((skill, i) => (
+                    <motion.li
+                      key={skill}
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0, x: -6 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08, duration: 0.26, ease: 'easeOut' }}
+                    >
+                      <span className="text-emerald-400">✓</span>
+                      {skill}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-amber-300/90">Skill gaps</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-text-muted">
+                  {['Docker', 'AWS'].map((skill, i) => (
+                    <motion.li
+                      key={skill}
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0, x: -6 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 + 0.18, duration: 0.26, ease: 'easeOut' }}
+                    >
+                      <span className="text-amber-400/80">○</span>
+                      {skill}
+                    </motion.li>
+                  ))}
+                </ul>
               </div>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </Reveal>
 
         {/* ---------------- Features ---------------- */}
-        <section className="pb-16">
-          <div className="text-center pb-10">
+        <Reveal amount={0.12} className="pb-16" as="section">
+          <div className="pb-8 text-center">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               What SkillBridge does
             </h2>
-            <p className="mt-2 max-w-2xl mx-auto text-sm text-text-muted">
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-text-muted">
               A complete career intelligence stack built for students and graduates.
             </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+          <Stagger
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            step={0.07}
+            lead={0.04}
+            amount={0.1}
+            as="div"
+          >
             {FEATURES.map(({ icon: Icon, title, body }) => (
-              <div key={title} className="sb-glass rounded-2xl p-5 sb-lift">
-                <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/20">
+              <StaggerItem
+                key={title}
+                className="sb-glass group rounded-2xl p-5 transition hover:-translate-y-1 hover:border-brand-500/30 hover:shadow-glass-hover"
+              >
+                <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/20 transition group-hover:bg-brand-500/20 group-hover:ring-brand-400/30">
                   <Icon className="h-4 w-4" />
                 </span>
                 <h3 className="mt-3 font-display text-sm font-semibold text-white">{title}</h3>
                 <p className="mt-1 text-xs leading-relaxed text-text-muted">{body}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
 
         {/* ---------------- Career pathway ---------------- */}
-        <section className="pb-20">
+        <Reveal amount={0.15} className="pb-20" as="section">
           <div className="sb-glass rounded-2xl p-6 sm:p-8">
             <h2 className="font-display text-lg font-semibold text-white">Your career pathway</h2>
             <p className="mt-1 text-xs text-text-muted">How a resume becomes a plan.</p>
 
-            <ol className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-2">
+            <Stagger
+              className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:flex-row sm:items-stretch sm:gap-2"
+              step={0.07}
+              lead={0.06}
+              amount={0.12}
+              as="ol"
+            >
               {PATHWAY.map(({ icon: Icon, label }, index) => (
-                <li key={label} className="flex flex-1 items-center gap-2">
-                  <div className="flex flex-1 items-center gap-3 rounded-xl border border-surface-border bg-surface-elevated/30 px-3.5 py-3 sb-lift">
-                    <Icon className="h-4 w-4 shrink-0 text-cyan-400" />
-                    <span className="text-xs font-medium text-white">{label}</span>
-                  </div>
+                <StaggerItem
+                  key={label}
+                  // `min-w-0` is load-bearing: without it each flex item refuses to
+                  // shrink below its content's min-content width, so the row of five
+                  // labels plus four chevrons overflows the viewport at ~640-720px
+                  // and gives the whole document a horizontal scrollbar.
+                  className="flex min-w-0 flex-1 items-center gap-2"
+                  as="li"
+                >
+                  <motion.div
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-surface-border bg-surface-elevated/30 px-3.5 py-3"
+                    whileHover={reduced ? undefined : { y: -2, scale: 1.01 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 28, mass: 0.6 }}
+                  >
+                    <Icon className="h-4 w-4 shrink-0 text-cyan-400" aria-hidden="true" />
+                    <span className="min-w-0 truncate text-xs font-medium text-white">{label}</span>
+                  </motion.div>
                   {index < PATHWAY.length - 1 && (
-                    <ArrowRight className="hidden h-3.5 w-3.5 shrink-0 text-text-muted sm:block" />
+                    <ArrowRight
+                      className="hidden h-3.5 w-3.5 shrink-0 text-text-muted sm:block"
+                      aria-hidden="true"
+                    />
                   )}
-                </li>
+                </StaggerItem>
               ))}
-            </ol>
+            </Stagger>
           </div>
-        </section>
+        </Reveal>
 
         {/* ---------------- CTA ---------------- */}
-        <section className="pb-20">
-          <div className="sb-glass rounded-2xl px-6 py-10 text-center">
+        <Reveal amount={0.18} className="pb-20" as="section">
+          <div className="sb-glass px-6 py-10 text-center rounded-2xl">
             <h2 className="font-display text-xl font-semibold tracking-tight text-white sm:text-2xl">
               Ready to find where your skills belong?
             </h2>
-            <p className="mt-2 max-w-lg mx-auto text-sm leading-relaxed text-text-muted">
-              Create an account, upload your resume and get a skill-alignment breakdown for
-              every opening in the database.
+            <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-text-muted">
+              Create an account, upload your resume and get a skill-alignment breakdown for every opening
+              in the database.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-400 hover:to-brand-500 sb-lift"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-400 hover:to-brand-500 active:scale-[0.98]"
               >
                 Create your account
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/50 px-5 py-3 text-sm font-semibold text-text-primary transition hover:bg-surface-elevated sb-lift"
+                className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/50 px-5 py-3 text-sm font-semibold text-text-primary transition hover:bg-surface-elevated active:scale-[0.98]"
               >
                 Sign in
               </Link>
             </div>
           </div>
-        </section>
+        </Reveal>
       </main>
 
       <footer className="border-t border-surface-border">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-6 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
+          <div className="mx-auto flex w-[90vw] max-w-[1600px] flex-col gap-2 px-[6vw] md:px-[7vw] lg:px-[8vw] xl:px-[9vw] py-6 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
             <SkillBridgeLogo size={16} />
             SkillBridge AI · CEP project
           </span>
-          <span>
-            Compatibility is a skill-similarity indicator, not a hiring prediction.
-          </span>
+          <span>Compatibility is a skill-similarity indicator, not a hiring prediction.</span>
         </div>
       </footer>
     </div>

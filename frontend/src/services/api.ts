@@ -4,7 +4,7 @@ import axios, { AxiosError } from 'axios'
  * Single place where the backend location is configured.
  * Falls back to the local API so `npm run dev` works with no .env file.
  */
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
 
 /** Every backend route lives under this prefix (mirrors app.core.config). */
 export const API_PREFIX = '/api'

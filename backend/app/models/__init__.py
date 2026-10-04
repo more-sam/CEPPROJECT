@@ -17,6 +17,7 @@ from app.models.progress import Progress
 from app.models.profile import StudentProfile
 from app.models.resume import Resume
 from app.models.roadmap import Roadmap, RoadmapItem
+from app.models.scrape import ScrapeJob
 from app.models.skill import Skill, StudentSkill
 from app.models.user import User
 
@@ -33,6 +34,7 @@ __all__ = [
     "Roadmap",
     "RoadmapItem",
     "SavedJob",
+    "ScrapeJob",
     "Skill",
     "StudentProfile",
     "StudentSkill",

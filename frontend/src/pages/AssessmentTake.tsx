@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, RotateCcw, Send, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -8,12 +9,15 @@ import { CompatibilityRing } from '../components/ui/CompatibilityRing'
 import { ErrorState, InlineError } from '../components/ui/ErrorState'
 import { SkeletonCard } from '../components/ui/LoadingSkeleton'
 import { ProgressBar } from '../components/ui/ProgressBar'
+import { Reveal, Stagger, StaggerItem } from '../motion/Reveal'
 import { useAsync } from '../hooks/useAsync'
+import { ease } from '../motion/tokens'
 import { getApiErrorMessage } from '../services/api'
 import { getAssessment, submitAssessment } from '../services/assessments'
 import type { AssessmentResult } from '../types'
 
 export default function AssessmentTake() {
+  const reduced = useReducedMotion()
   const { assessmentId } = useParams<{ assessmentId: string }>()
   const numericId = Number(assessmentId)
 
@@ -66,58 +70,77 @@ export default function AssessmentTake() {
           Back to assessments
         </Link>
 
-        <section className="sb-glass rounded-2xl p-6">
-          <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-8">
-            <CompatibilityRing value={result.score} size={150} label="Your score" />
-            <div className="flex-1">
-              <h1 className="font-display text-xl font-semibold text-white">
-                {result.assessment_title}
-              </h1>
-              <p className="mt-1 text-sm text-slate-400">
-                {correct} of {result.total_count} correct · pass mark {result.pass_score}%
-              </p>
+        <Reveal amount={0.12}>
+          <div className="sb-glass rounded-2xl p-6">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-8">
+              <CompatibilityRing value={result.score} size={150} label="Your score" />
+              <div className="flex-1">
+                <h1 className="font-display text-xl font-semibold text-white">
+                  {result.assessment_title}
+                </h1>
+                <p className="mt-1 text-sm text-slate-400">
+                  {correct} of {result.total_count} correct · pass mark {result.pass_score}%
+                </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                {result.passed ? (
-                  <Badge tone="success">Passed</Badge>
-                ) : (
-                  <Badge tone="warn">Not passed yet</Badge>
-                )}
-                {result.progress_updated && (
-                  <Badge tone="brand">
-                    {result.skill_name} progress · {result.progress_percentage}%
-                  </Badge>
-                )}
-                {result.new_skills_added.map((skill) => (
-                  <Badge key={skill} tone="aqua">
-                    {skill} added to profile
-                  </Badge>
-                ))}
-              </div>
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <motion.span
+                    initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 0.86 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.22, ease: ease.out }}
+                  >
+                    {result.passed ? (
+                      <Badge tone="success">Passed</Badge>
+                    ) : (
+                      <Badge tone="warn">Not passed yet</Badge>
+                    )}
+                  </motion.span>
+                  {result.progress_updated && (
+                    <motion.span
+                      initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 0.86 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.08, duration: 0.22, ease: ease.out }}
+                    >
+                      <Badge tone="brand">
+                        {result.skill_name} progress · {result.progress_percentage}%
+                      </Badge>
+                    </motion.span>
+                  )}
+                  {result.new_skills_added.map((skill, idx) => (
+                    <motion.span
+                      key={skill}
+                      initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 0.86 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.14 + idx * 0.06, duration: 0.22, ease: ease.out }}
+                    >
+                      <Badge tone="aqua">{skill} added to profile</Badge>
+                    </motion.span>
+                  ))}
+                </div>
 
-              <div className="mt-5 flex flex-wrap gap-2.5">
-                <Link to="/progress">
-                  <Button variant="secondary">View progress</Button>
-                </Link>
-                <Link to="/assessments">
-                  <Button variant="secondary" icon={<RotateCcw className="h-4 w-4" />}>
-                    Retake another
-                  </Button>
-                </Link>
-                <Link to="/roadmap">
-                  <Button>Continue roadmap</Button>
-                </Link>
+                <div className="mt-5 flex flex-wrap gap-2.5">
+                  <Link to="/progress">
+                    <Button variant="secondary">View progress</Button>
+                  </Link>
+                  <Link to="/assessments">
+                    <Button variant="secondary" icon={<RotateCcw className="h-4 w-4" />}>
+                      Retake another
+                    </Button>
+                  </Link>
+                  <Link to="/roadmap">
+                    <Button>Continue roadmap</Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </Reveal>
 
-        <section className="space-y-3">
-          <h2 className="font-display text-sm font-semibold text-white">
-            Answer review
-          </h2>
+        <Reveal amount={0.1} delay={0.06}>
+          <h2 className="font-display text-sm font-semibold text-white">Answer review</h2>
+        </Reveal>
+        <Stagger className="space-y-3" step={0.05} amount={0.1} lead={0.08}>
           {result.review.map((item, index) => (
-            <div
+            <StaggerItem
               key={item.question_id}
               className={`sb-glass rounded-2xl p-4 ${
                 item.is_correct ? 'ring-1 ring-emerald-400/20' : 'ring-1 ring-rose-400/20'
@@ -159,9 +182,9 @@ export default function AssessmentTake() {
                   )}
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </section>
+        </Stagger>
       </div>
     )
   }
@@ -184,6 +207,8 @@ export default function AssessmentTake() {
       setSubmitting(false)
     }
   }
+
+  const questionKey = `q-${current}`
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -214,9 +239,28 @@ export default function AssessmentTake() {
         />
       </header>
 
-      {error && <InlineError message={error} />}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.16, ease: ease.out }}
+          >
+            <InlineError message={error} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <section className="sb-glass rounded-2xl p-5 sm:p-6">
+      <AnimatePresence mode="wait">
+        <motion.section
+          key={questionKey}
+          className="sb-glass rounded-2xl p-5 sm:p-6"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.22, ease: ease.out }}
+        >
         <p className="font-display text-base font-medium leading-relaxed text-white">
           {question.question}
         </p>
@@ -226,30 +270,45 @@ export default function AssessmentTake() {
             const active = selected === option
             return (
               <li key={option}>
-                <button
+                <motion.button
                   type="button"
                   onClick={() => setAnswers({ ...answers, [question.id]: option })}
                   aria-pressed={active}
-                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition ${
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.12, ease: ease.out }}
+                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm ${
                     active
                       ? 'border-brand-400/40 bg-brand-500/12 text-white'
                       : 'border-white/10 bg-white/4 text-slate-300 hover:border-white/20 hover:bg-white/8'
                   }`}
                 >
-                  <span
+                  <motion.span
                     className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
                       active ? 'border-brand-300 bg-brand-400 text-ink-950' : 'border-white/20'
                     }`}
+                    animate={active ? { scale: 1.06 } : { scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 22 }}
                   >
-                    {active && <Check className="h-3 w-3" />}
-                  </span>
+                    <AnimatePresence>
+                      {active && (
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.6 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.6 }}
+                        >
+                          <Check className="h-3 w-3" />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.span>
                   {option}
-                </button>
+                </motion.button>
               </li>
             )
           })}
         </ul>
-      </section>
+        </motion.section>
+      </AnimatePresence>
 
       <nav className="flex items-center justify-between gap-3">
         <Button
@@ -284,7 +343,7 @@ export default function AssessmentTake() {
       </nav>
 
       {/* Jump grid so a student can revisit skipped questions. */}
-      <section className="sb-glass rounded-2xl p-4">
+      <div className="sb-glass rounded-2xl p-4">
         <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
           Jump to question
         </p>
@@ -292,11 +351,12 @@ export default function AssessmentTake() {
           {questions.map((item, index) => {
             const done = Boolean(answers[item.id])
             return (
-              <button
+              <motion.button
                 key={item.id}
                 type="button"
                 onClick={() => setCurrent(index)}
                 aria-label={`Go to question ${index + 1}${done ? ' (answered)' : ''}`}
+                whileTap={{ scale: 0.9 }}
                 className={`grid h-8 w-8 place-items-center rounded-lg text-[11px] font-medium transition ${
                   index === current
                     ? 'bg-brand-500/25 text-brand-100 ring-1 ring-brand-400/40'
@@ -304,13 +364,14 @@ export default function AssessmentTake() {
                       ? 'bg-emerald-500/15 text-emerald-200'
                       : 'bg-white/6 text-slate-400 hover:bg-white/10'
                 }`}
+                transition={{ type: 'spring', stiffness: 420, damping: 24 }}
               >
                 {index + 1}
-              </button>
+              </motion.button>
             )
           })}
         </div>
-      </section>
+      </div>
     </div>
   )
 }

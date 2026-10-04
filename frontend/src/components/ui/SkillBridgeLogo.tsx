@@ -1,199 +1,247 @@
-import type { SVGProps } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { useId, type SVGProps } from 'react'
 
 /**
- * SkillBridge AI Logo — Geometric bridge/network symbol
- * 
- * Represents: Skills → Connection → Opportunity
- * Visual language: Technical, geometric, premium
+ * Props framer-motion replaces on `motion.svg` are omitted from the SVG prop
+ * set before the spread. React's handlers and SVG attributes share names with
+ * framer's own (`onAnimationStart` vs its `AnimationDefinition` callback,
+ * `values` vs its map of MotionValues), which makes a plain
+ * `extends SVGProps<SVGSVGElement>` a type error on every `motion.svg` site.
  */
-
-interface SkillBridgeLogoProps extends SVGProps<SVGSVGElement> {
+type SkillBridgeLogoProps = Omit<
+  SVGProps<SVGSVGElement>,
+  | 'onAnimationStart'
+  | 'onAnimationEnd'
+  | 'onDragStart'
+  | 'onDrag'
+  | 'onDragEnd'
+  | 'onDragEnter'
+  | 'onDragLeave'
+  | 'onDragOver'
+  | 'onDrop'
+  | 'values'
+> & {
   size?: number
+  variant?: 'full' | 'icon' | 'compact' | 'monochrome' | 'dark' | 'light' | 'favicon'
   full?: boolean
+  animated?: boolean
+  animate?: boolean
+  aiActive?: boolean
 }
 
-export function SkillBridgeLogo({ size = 32, full = true, ...rest }: SkillBridgeLogoProps) {
-  const iconSize = size
-  const width = full ? size * 3.5 : size
-  const height = size
+export function SkillBridgeLogo({
+  size = 32,
+  variant = 'full',
+  full,
+  animated = true,
+  animate,
+  aiActive = false,
+  className,
+  ...rest
+}: SkillBridgeLogoProps) {
+  const reduced = useReducedMotion()
+  const unique = useId().replace(/:/g, '')
+  const gradId = `sb-grad-${unique}`
+  const glowId = `sb-glow-${unique}`
 
-  if (!full) {
+  const isAnimated = animate ?? animated
+  const resolved = full === false ? 'icon' : variant
+  const shouldAnimate = isAnimated && !reduced && !aiActive
+
+  const defs = (
+    <defs>
+      <linearGradient id={gradId} x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#3B82F6" />
+        <stop offset="100%" stopColor="#22D3EE" />
+      </linearGradient>
+      {aiActive && (
+        <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      )}
+    </defs>
+  )
+
+  if (resolved === 'monochrome' || resolved === 'dark' || resolved === 'light') {
     return (
-      <svg
-        width={iconSize}
-        height={iconSize}
-        viewBox="0 0 100 100"
+      <motion.svg
+        width={size}
+        height={size}
+        viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
         focusable="false"
-        style={{ display: 'block' }}
+        style={{ color: 'currentColor', ...rest.style }}
+        className={className}
         {...rest}
       >
-        <defs>
-          <linearGradient id="sb-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="50%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#8b5cf6" />
-          </linearGradient>
-        </defs>
-        
-        {/* Skill nodes - four corner nodes representing skills */}
-        <circle cx={22} cy={78} r={7} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={78} cy={22} r={7} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={22} cy={22} r={7} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={78} cy={78} r={7} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        
-        {/* Central AI hub */}
-        <circle cx={50} cy={50} r={12} fill="url(#sb-logo-gradient)" />
-        
-        {/* Connections - skill pathways to AI */}
-        <path
-          d="M29 71 L42 42 M58 29 L42 42 M29 29 L42 42 M58 58 L42 42"
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0.5"
-        />
-        
-        {/* Upward progression arrow */}
-        <path
-          d="M50 38 L50 18"
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={3}
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.7"
-        />
-        <path
-          d="M42 26 L50 18 L58 26"
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0.7"
-        />
-        
-        {/* Subtle "S" geometry in negative space */}
-        <path
-          d="M35 50 Q42 35 50 50 Q58 65 65 50"
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.25"
-        />
-      </svg>
+        <g transform="translate(4, 4) scale(0.8)">
+          <path d="M 32 10 L 22 10 C 16 10, 12 14, 12 20 C 12 26, 16 30, 22 30 L 38 30" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+          <path d="M 16 38 L 26 38 C 32 38, 36 34, 36 28 C 36 22, 32 18, 26 18 L 10 18" stroke="currentColor" strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+          <circle cx="32" cy="10" r="3" fill="currentColor" />
+          <circle cx="16" cy="38" r="3" fill="currentColor" />
+        </g>
+      </motion.svg>
+    )
+  }
+  if (resolved === 'icon' || resolved === 'favicon') {
+    return (
+      <motion.svg
+        width={size}
+        height={size}
+        viewBox="0 0 48 48"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+        initial={shouldAnimate ? 'hidden' : false}
+        animate={aiActive ? 'ai' : shouldAnimate ? 'visible' : false}
+        whileHover={!reduced && !aiActive ? 'hover' : undefined}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.1 } },
+          hover: { scale: 1.05 },
+          ai: {}
+        }}
+        className={className}
+        {...rest}
+      >
+        {defs}
+        <g transform="translate(4, 4) scale(0.8)">
+          <motion.path d="M 32 10 L 22 10 C 16 10, 12 14, 12 20 C 12 26, 16 30, 22 30 L 38 30" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, repeat: Infinity } } }} />
+          <motion.path d="M 16 38 L 26 38 C 32 38, 36 34, 36 28 C 36 22, 32 18, 26 18 L 10 18" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, delay: 0.2, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, delay: 0.3, repeat: Infinity } } }} />
+          <motion.circle cx="32" cy="10" r="3" fill="#22D3EE" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.5, type: 'spring' } } }} />
+          <motion.circle cx="16" cy="38" r="3" fill="#3B82F6" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.7, type: 'spring' } } }} />
+        </g>
+      </motion.svg>
+    )
+  }
+  
+  if (resolved === 'compact') {
+    const w = size * 5.2
+    const h = size
+    return (
+      <motion.svg
+        width={w}
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        fill="none"
+        aria-label="SkillBridge AI"
+        style={{ display: 'block', flexShrink: 0 }}
+        initial={shouldAnimate ? 'hidden' : false}
+        animate={aiActive ? 'ai' : shouldAnimate ? 'visible' : false}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.1 } }
+        }}
+        {...rest}
+      >
+        {defs}
+        <g transform={`scale(${size / 48})`}>
+          <g transform="translate(4, 4) scale(0.8)">
+            <motion.path d="M 32 10 L 22 10 C 16 10, 12 14, 12 20 C 12 26, 16 30, 22 30 L 38 30" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, repeat: Infinity } } }} />
+            <motion.path d="M 16 38 L 26 38 C 32 38, 36 34, 36 28 C 36 22, 32 18, 26 18 L 10 18" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, delay: 0.2, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, delay: 0.3, repeat: Infinity } } }} />
+            <motion.circle cx="32" cy="10" r="3" fill="#22D3EE" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.5, type: 'spring' } } }} />
+            <motion.circle cx="16" cy="38" r="3" fill="#3B82F6" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.7, type: 'spring' } } }} />
+          </g>
+        </g>
+        <motion.text 
+          x={size * 1.3} 
+          y={h * 0.65} 
+          fill="#F8FAFC" 
+          fontSize={size * 0.7} 
+          fontWeight={600} 
+          fontFamily="var(--font-display,'Space Grotesk','Inter',system-ui,sans-serif)"
+          variants={{
+            hidden: { opacity: 0, x: -10 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay: 0.4 } }
+          }}
+        >
+          SkillBridge
+        </motion.text>
+        <motion.text 
+          x={size * 1.3 + (size * 0.7 * 4.4)} 
+          y={h * 0.65} 
+          fill="#22D3EE" 
+          fontSize={size * 0.4} 
+          fontWeight={600} 
+          fontFamily="var(--font-display,'Space Grotesk','Inter',system-ui,sans-serif)"
+          variants={{
+            hidden: { opacity: 0, x: -10 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay: 0.6 } }
+          }}
+        >
+          AI
+        </motion.text>
+      </motion.svg>
     )
   }
 
+  // Full / Default Variant (desktop navbar)
+  const fw = size * 6
+  const fh = size
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
+    <motion.svg
+      width={fw}
+      height={fh}
+      viewBox={`0 0 ${fw} ${fh}`}
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      focusable="false"
+      aria-label="SkillBridge AI"
       style={{ display: 'block', flexShrink: 0 }}
+      initial={shouldAnimate ? 'hidden' : false}
+      animate={aiActive ? 'ai' : shouldAnimate ? 'visible' : false}
+      whileHover={!reduced && !aiActive ? 'hover' : undefined}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.1 } },
+        hover: { scale: 1.02 }
+      }}
       {...rest}
     >
-      <defs>
-        <linearGradient id="sb-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="50%" stopColor="#06b6d4" />
-          <stop offset="100%" stopColor="#8b5cf6" />
-        </linearGradient>
-        <linearGradient id="sb-logo-text-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f8fafc" />
-          <stop offset="50%" stopColor="#a5b4fc" />
-          <stop offset="100%" stopColor="#22d3ee" />
-        </linearGradient>
-      </defs>
-
-      {/* Brand mark */}
-      <g transform={`translate(0, ${(height - size) / 2})`}>
-        {/* Skill nodes - four corner nodes */}
-        <circle cx={18} cy={size * 0.78} r={size * 0.07} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={size * 0.78} cy={size * 0.22} r={size * 0.07} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={18} cy={size * 0.22} r={size * 0.07} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        <circle cx={size * 0.78} cy={size * 0.78} r={size * 0.07} fill="url(#sb-logo-gradient)" opacity="0.9" />
-        
-        {/* Central AI hub */}
-        <circle cx={size * 0.5} cy={size * 0.5} r={size * 0.12} fill="url(#sb-logo-gradient)" />
-        
-        {/* Connections - skill pathways to AI */}
-        <path
-          d={`M${18 + size * 0.07} ${size * 0.78 - size * 0.07} L${size * 0.42} ${size * 0.42} M${size * 0.58} ${size * 0.22 + size * 0.07} L${size * 0.42} ${size * 0.42} M${18 + size * 0.07} ${size * 0.22 + size * 0.07} L${size * 0.42} ${size * 0.42} M${size * 0.58} ${size * 0.58} L${size * 0.42} ${size * 0.42}`}
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={size * 0.025}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0.5"
-        />
-        
-        {/* Upward progression arrow */}
-        <path
-          d={`M${size * 0.5} ${size * 0.38} L${size * 0.5} ${size * 0.18}`}
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={size * 0.03}
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.7"
-        />
-        <path
-          d={`M${size * 0.42} ${size * 0.26} L${size * 0.5} ${size * 0.18} L${size * 0.58} ${size * 0.26}`}
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={size * 0.03}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0.7"
-        />
-        
-        {/* Subtle "S" geometry */}
-        <path
-          d={`M${size * 0.35} ${size * 0.5} Q${size * 0.42} ${size * 0.35} ${size * 0.5} ${size * 0.5} Q${size * 0.58} ${size * 0.65} ${size * 0.65} ${size * 0.5}`}
-          stroke="url(#sb-logo-gradient)"
-          strokeWidth={size * 0.015}
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.25"
-        />
-      </g>
-
-      {/* Wordmark */}
-      {full && (
-        <g transform={`translate(${size + 8}, ${height * 0.28})`}>
-          <text
-            x={0}
-            y={0}
-            fill="url(#sb-logo-text-gradient)"
-            fontSize={size * 0.45}
-            fontWeight={600}
-            letterSpacing={size * 0.002}
-            fontFamily="var(--font-display, 'Space Grotesk', 'Inter', system-ui, sans-serif)"
-          >
-            SkillBridge
-          </text>
-          <text
-            x={0}
-            y={size * 0.55}
-            fill="#22d3ee"
-            fontSize={size * 0.3}
-            fontWeight={600}
-            letterSpacing={size * 0.006}
-            fontFamily="var(--font-display, 'Space Grotesk', 'Inter', system-ui, sans-serif)"
-          >
-            AI
-          </text>
+      {defs}
+      <g transform={`scale(${size / 48})`}>
+        <g transform="translate(4, 4) scale(0.8)">
+          <motion.path d="M 32 10 L 22 10 C 16 10, 12 14, 12 20 C 12 26, 16 30, 22 30 L 38 30" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, repeat: Infinity } } }} />
+          <motion.path d="M 16 38 L 26 38 C 32 38, 36 34, 36 28 C 36 22, 32 18, 26 18 L 10 18" stroke={`url(#${gradId})`} strokeWidth="5" strokeLinecap="square" strokeLinejoin="miter" fill="none" variants={{ hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, delay: 0.2, ease: 'easeOut' } }, ai: { opacity: [0.8, 1, 0.8], transition: { duration: 1.2, delay: 0.3, repeat: Infinity } } }} />
+          <motion.circle cx="32" cy="10" r="3" fill="#22D3EE" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.5, type: 'spring' } } }} />
+          <motion.circle cx="16" cy="38" r="3" fill="#3B82F6" variants={{ hidden: { scale: 0 }, visible: { scale: 1, transition: { delay: 0.7, type: 'spring' } } }} />
         </g>
-      )}
-    </svg>
+      </g>
+      <motion.text 
+        x={size * 1.25} 
+        y={fh * 0.65} 
+        fill="#F8FAFC" 
+        fontSize={size * 0.7} 
+        fontWeight={600} 
+        letterSpacing="0.01em" 
+        fontFamily="var(--font-display,'Space Grotesk','Inter',system-ui,sans-serif)"
+        variants={{
+          hidden: { opacity: 0, y: 4 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.4 } }
+        }}
+      >
+        SkillBridge
+      </motion.text>
+      <motion.text 
+        x={size * 1.25 + (size * 0.7 * 4.4)} 
+        y={fh * 0.65} 
+        fill="#22D3EE" 
+        fontSize={size * 0.4} 
+        fontWeight={700} 
+        letterSpacing="0.02em" 
+        fontFamily="var(--font-display,'Space Grotesk','Inter',system-ui,sans-serif)"
+        variants={{
+          hidden: { opacity: 0, y: 4 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.5 } }
+        }}
+      >
+        AI
+      </motion.text>
+    </motion.svg>
   )
 }

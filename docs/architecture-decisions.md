@@ -376,3 +376,30 @@ have been worse, because it would silently discard a reviewer's work.
 **Consequence.** The reset only ever touches the configured demo account and is
 reported in the seed output. A test drives it against a throwaway account so the
 real demo student is never mutated by the suite.
+
+---
+
+## ADR-023 - Sieve polling is request-driven, not a worker
+
+**Decision.** The optional Sieve scrape integration persists every run in a
+scrape_jobs table and advances it by at most one poll per authenticated
+GET /api/scrapes/<id>, honouring an exponential backoff (5s to ~30s) stored on
+the row. POST /api/scrapes is never retried after a timeout or network error.
+No queue, scheduler or worker process was added.
+
+**Reason.** The application has no background-job infrastructure - resume
+analysis runs inside its request - so inventing one for this feature would have
+introduced a second, less-tested system for a job that is naturally polled. The
+Sieve contract is explicit that a timed-out POST /api/scrapes may have
+succeeded and spends credits with no idempotency key, so auto-retrying it would
+risk duplicate paid runs; only idempotent GETs are retried.
+
+**Consequence.** Durability comes from the database, not the process: the
+session_id is committed the instant Sieve answers, so a restart resumes
+polling from the row instead of starting a duplicate run. Every sieve route is
+gated on SIEVE_API_KEY; with it empty the endpoints report 
+ot configured
+and the rest of the application behaves exactly as before. The key is
+server-side only - only the backend proxies delivered files, and the browser
+never sees it. python -m app.sieve_login performs the device login and writes
+the approved key straight to the root .env.

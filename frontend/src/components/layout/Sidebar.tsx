@@ -38,10 +38,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   return (
     <div className="flex h-full flex-col gap-6 p-5">
       <NavLink to="/dashboard" onClick={onNavigate} className="flex items-center gap-2.5">
-        <SkillBridgeLogo size={32} />
-        <span className="font-display text-sm font-semibold tracking-tight text-white">
-          SkillBridge <span className="text-brand-300">AI</span>
-        </span>
+        <SkillBridgeLogo size={30} variant="full" animated={false} />
       </NavLink>
 
       {/* Command palette trigger - ⌘K / Ctrl+K works too. */}

@@ -10,6 +10,7 @@ import { ErrorState } from '../components/ui/ErrorState'
 import { SkeletonGrid } from '../components/ui/LoadingSkeleton'
 import { PageHeader } from '../components/ui/PageHeader'
 import { SearchBar } from '../components/ui/SearchBar'
+import { Stagger, StaggerItem } from '../motion/Reveal'
 import { useAsync } from '../hooks/useAsync'
 import { getApiErrorMessage } from '../services/api'
 import { getJobFilters, listJobs, DEFAULT_PAGE_SIZE } from '../services/jobs'
@@ -345,7 +346,7 @@ export default function Opportunities() {
           )}
 
           {!jobs.loading && !jobs.error && items.length > 0 && (
-            <>
+            <div className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-text-muted">
                   Showing {items.length} of {meta?.total ?? items.length} opportunities
@@ -381,20 +382,25 @@ export default function Opportunities() {
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <Stagger
+                className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                step={0.055}
+                amount={0.12}
+              >
                 {items.map((opportunity: OpportunityCardType) => (
-                  <OpportunityCard
-                    key={opportunity.id}
-                    opportunity={opportunity}
-                    onToggleSave={
-                      signedIn
-                        ? (jobId, nextSaved) => void handleToggleSave(jobId, nextSaved)
-                        : undefined
-                    }
-                    busy={savingId === opportunity.id}
-                  />
+                  <StaggerItem key={opportunity.id}>
+                    <OpportunityCard
+                      opportunity={opportunity}
+                      onToggleSave={
+                        signedIn
+                          ? (jobId, nextSaved) => void handleToggleSave(jobId, nextSaved)
+                          : undefined
+                      }
+                      busy={savingId === opportunity.id}
+                    />
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
 
               {meta && meta.total_pages > 1 && (
                 <nav
@@ -422,7 +428,7 @@ export default function Opportunities() {
                   </Button>
                 </nav>
               )}
-            </>
+            </div>
           )}
 
           {!signedIn && (

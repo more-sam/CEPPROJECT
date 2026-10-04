@@ -1,3 +1,7 @@
+import { motion, useReducedMotion } from 'framer-motion'
+
+import { ease } from '../../motion/tokens'
+
 interface ProgressBarProps {
   value: number
   max?: number
@@ -12,6 +16,13 @@ const TONES = {
   aqua: 'from-aqua-500 to-brand-400',
 }
 
+/**
+ * Tracked progress bar.
+ *
+ * The fill draws itself from 0% with an ease-out, and a short sheen sweeps
+ * along it once. Both run on transform + scaleX rather than width so they
+ * stay on the compositor.
+ */
 export function ProgressBar({
   value,
   max = 100,
@@ -19,6 +30,7 @@ export function ProgressBar({
   tone = 'brand',
   showLabel = false,
 }: ProgressBarProps) {
+  const reduced = useReducedMotion()
   const percent = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0
 
   return (
@@ -30,18 +42,28 @@ export function ProgressBar({
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        <div
+        <motion.div
           className={`h-full rounded-full bg-gradient-to-r ${TONES[tone]}`}
-          style={{
-            width: `${percent}%`,
-            transition: 'width 700ms cubic-bezier(0.22, 1, 0.36, 1)',
-          }}
+          initial={reduced ? { width: `${percent}%` } : { scaleX: 0, originX: 0 }}
+          animate={{ scaleX: percent / 100 }}
+          transition={
+            reduced
+              ? { duration: 0 }
+              : { duration: 0.82, ease: ease.out }
+          }
+          style={reduced ? undefined : { willChange: 'transform' }}
         />
       </div>
+
       {showLabel && (
-        <span className="w-10 shrink-0 text-right text-xs font-medium text-slate-400">
+        <motion.span
+          className="w-10 shrink-0 text-right font-mono text-xs font-medium text-slate-400 tabular-nums"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.22, duration: 0.22, ease: ease.out }}
+        >
           {percent.toFixed(0)}%
-        </span>
+        </motion.span>
       )}
     </div>
   )

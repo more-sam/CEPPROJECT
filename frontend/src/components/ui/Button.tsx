@@ -1,10 +1,13 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
-type Size = 'sm' | 'md' | 'lg'
+import { ease } from '../../motion/tokens'
 
-const VARIANTS: Record<Variant, string> = {
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
+export type ButtonSize = 'sm' | 'md' | 'lg'
+
+const VARIANTS: Record<ButtonVariant, string> = {
   primary:
     'bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-lg shadow-brand-600/25 hover:from-brand-400 hover:to-brand-500',
   secondary:
@@ -16,21 +19,21 @@ const VARIANTS: Record<Variant, string> = {
     'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-600/20 hover:from-emerald-400 hover:to-teal-400',
 }
 
-const SIZES: Record<Size, string> = {
+const SIZES: Record<ButtonSize, string> = {
   sm: 'px-3 py-1.5 text-xs gap-1.5 rounded-lg',
   md: 'px-4 py-2.5 text-sm gap-2 rounded-xl',
   lg: 'px-5 py-3 text-sm gap-2 rounded-xl',
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Variant
-  size?: Size
+  variant?: ButtonVariant
+  size?: ButtonSize
   loading?: boolean
   icon?: ReactNode
   fullWidth?: boolean
 }
 
-/** Shared button. Every interactive action in the app uses this. */
+/** Every interactive action in the app uses this. */
 export function Button({
   variant = 'primary',
   size = 'md',
@@ -43,12 +46,17 @@ export function Button({
   type = 'button',
   ...rest
 }: ButtonProps) {
+  const reduced = useReducedMotion()
+
   return (
-    <button
+    <motion.button
       type={type}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${VARIANTS[variant]} ${SIZES[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
-      {...rest}
+      className={`inline-flex items-center justify-center font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${VARIANTS[variant]} ${SIZES[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      whileTap={reduced ? undefined : { scale: 0.97 }}
+      whileHover={reduced ? undefined : { y: -0.5 }}
+      transition={{ duration: 0.16, ease: ease.out }}
+      {...(rest as Record<string, unknown>)}
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -56,6 +64,6 @@ export function Button({
         icon
       )}
       {children}
-    </button>
+    </motion.button>
   )
 }

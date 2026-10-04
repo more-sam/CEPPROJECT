@@ -1,10 +1,13 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { MotionConfig } from 'framer-motion'
 
 import { AmbientBackdrop } from './components/layout/AmbientBackdrop'
 import { AppShell } from './components/layout/AppShell'
 import { ContentLoader } from './components/layout/PageLoader'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
+import { CursorGlow } from './motion/CursorGlow'
+import { ease } from './motion/tokens'
 import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
@@ -38,12 +41,18 @@ const SkillGap = lazy(() => import('./pages/SkillGap'))
  * - Public: landing, sign in, sign up.
  * - Browsable: opportunity browsing works with or without an account.
  * - Protected: everything else, rendered inside the authenticated shell.
+ *
+ * `MotionConfig reducedMotion="user"` makes every framer-motion element in the
+ * app drop its transforms automatically when the visitor asks for reduced
+ * motion, so individual components never have to remember to check.
  */
 export default function App() {
   return (
-    <BrowserRouter>
-      <AmbientBackdrop />
-      <Routes>
+    <MotionConfig reducedMotion="user" transition={{ ease: ease.out }}>
+      <BrowserRouter>
+        <AmbientBackdrop />
+        <CursorGlow />
+        <Routes>
         {/* Public */}
         <Route path="/" element={<Landing />} />
         <Route
@@ -75,7 +84,7 @@ export default function App() {
           }
         />
 
-        {/* Browsable signed in or out - using AdaptiveLayout equivalent */}
+        {/* Browsable signed in or out. */}
         <Route
           path="/opportunities"
           element={
@@ -102,7 +111,7 @@ export default function App() {
           }
         />
 
-        {/* Authenticated app - uses new AppShell */}
+        {/* Authenticated app */}
         <Route
           element={
             <ProtectedRoute>
@@ -127,7 +136,8 @@ export default function App() {
         <Route path="/jobs/:jobId" element={<Navigate to="/opportunities" replace />} />
 
         <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </MotionConfig>
   )
 }

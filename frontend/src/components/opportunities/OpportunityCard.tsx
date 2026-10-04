@@ -1,5 +1,6 @@
 import { Bookmark, BookmarkCheck, CalendarDays, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
 
 import type { OpportunityCard as OpportunityCardType } from '../../types'
 import { displayHost, isSafeExternalUrl } from '../../utils/links'
@@ -9,6 +10,7 @@ import { CompanyLogo } from '../ui/CompanyLogo'
 import { CompatibilityRing } from '../ui/CompatibilityRing'
 import { SkillChip } from '../ui/SkillChip'
 import { ApplyAction } from './ApplyAction'
+import { ease } from '../../motion/tokens'
 
 const WORK_TYPE_LABEL: Record<string, string> = {
   remote: 'Remote',
@@ -83,10 +85,15 @@ export function OpportunityCard({
   const posted = relativeDate(posted_at)
   const isDemo = (source ?? '').toUpperCase() === 'DEMO'
   const websiteHost = displayHost(company.website_url)
+  const reduced = useReducedMotion()
 
   return (
-    <article className="sb-glass flex flex-col gap-4 rounded-2xl p-5 transition hover:border-brand-400/25">
-      <div className="flex items-start justify-between gap-3">
+    <motion.article
+      className="sb-glass flex flex-col gap-4 rounded-2xl p-5"
+      whileHover={reduced ? undefined : { y: -3, scale: 1.01 }}
+      whileTap={reduced ? undefined : { scale: 0.992 }}
+      transition={{ duration: 0.22, ease: ease.out }}
+    >      <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <CompanyLogo
             companyName={company.name}
@@ -110,12 +117,14 @@ export function OpportunityCard({
         </div>
 
         {onToggleSave && (
-          <button
+          <motion.button
             type="button"
             onClick={() => onToggleSave(id, !is_saved)}
             disabled={busy}
             aria-pressed={is_saved}
             aria-label={is_saved ? `Unsave ${title}` : `Save ${title}`}
+            whileTap={reduced ? undefined : { scale: 0.94 }}
+            transition={{ duration: 0.12, ease: ease.out }}
             className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg border transition disabled:opacity-50 ${
               is_saved
                 ? 'border-brand-400/30 bg-brand-500/15 text-brand-300'
@@ -127,7 +136,7 @@ export function OpportunityCard({
             ) : (
               <Bookmark className="h-4 w-4" />
             )}
-          </button>
+          </motion.button>
         )}
       </div>
 
@@ -229,6 +238,6 @@ export function OpportunityCard({
           View opportunity
         </Link>
       </div>
-    </article>
+    </motion.article>
   )
 }

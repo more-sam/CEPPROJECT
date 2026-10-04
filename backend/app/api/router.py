@@ -12,6 +12,7 @@ from app.api.profile import router as profile_router
 from app.api.progress import router as progress_router
 from app.api.resume import router as resume_router
 from app.api.roadmaps import router as roadmaps_router
+from app.api.scrapes import router as scrapes_router
 
 api_router = APIRouter()
 
@@ -26,5 +27,6 @@ api_router.include_router(matching_router)
 api_router.include_router(roadmaps_router)
 api_router.include_router(assessments_router)
 api_router.include_router(progress_router)
+api_router.include_router(scrapes_router)
 
 __all__ = ["api_router"]

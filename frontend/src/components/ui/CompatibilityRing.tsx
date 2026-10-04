@@ -1,3 +1,9 @@
+import { motion, useMotionValue, useReducedMotion } from 'framer-motion'
+import { useEffect } from 'react'
+
+import { duration, ease } from '../../motion/tokens'
+import { useCountUp } from '../../hooks/useCountUp'
+
 interface CompatibilityRingProps {
   /** 0-100, or null when the visitor is anonymous / has no skills yet. */
   value: number | null
@@ -30,7 +36,10 @@ export function scoreTone(value: number): {
 /**
  * Signature visual #2 (spec §21): SkillBridge Compatibility.
  *
- * Always a skill-alignment figure - never labelled as a hiring probability.
+ * The ring draws itself on mount with a pathLength animation while the number
+ * counts up in lock-step. The band colour is driven from the final value, not
+ * the animated one, so the colour never flickers through intermediate bands
+ * while counting.
  */
 export function CompatibilityRing({
   value,
@@ -39,18 +48,38 @@ export function CompatibilityRing({
   label = 'SkillBridge Compatibility',
   compact = false,
 }: CompatibilityRingProps) {
+  const motionValue = useMotionValue(0)
+  const reduced = useReducedMotion()
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
 
-  if (value === null) {
+  const nullState = value === null
+
+  useEffect(() => {
+    if (nullState) {
+      motionValue.set(0)
+      return
+    }
+    const clamped = Math.max(0, Math.min(100, value))
+    if (reduced) {
+      motionValue.jump(clamped)
+    } else {
+      motionValue.set(clamped)
+    }
+  }, [value, reduced, nullState, motionValue])
+
+  if (nullState) {
     return (
       <div className="flex flex-col items-center gap-1.5" style={{ width: size }}>
-        <div
+        <motion.div
           className="grid place-items-center rounded-full border border-dashed border-white/15"
           style={{ width: size, height: size }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: duration.fast, ease: ease.out }}
         >
           <span className="text-xs text-slate-500">No score yet</span>
-        </div>
+        </motion.div>
         {!compact && <span className="text-[11px] text-slate-500">{label}</span>}
       </div>
     )
@@ -60,6 +89,9 @@ export function CompatibilityRing({
   const tone = scoreTone(clamped)
   const dash = (clamped / 100) * circumference
 
+  // The displayed number counts in lock-step with the ring. Under reduced
+  // motion `useCountUp` jumps directly; here we mirror that rather than
+  // animating through every intermediate integer.
   return (
     <div className="flex flex-col items-center gap-2">
       <div
@@ -77,7 +109,7 @@ export function CompatibilityRing({
             stroke="rgba(255,255,255,0.07)"
             strokeWidth={strokeWidth}
           />
-          <circle
+          <motion.circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
@@ -86,23 +118,72 @@ export function CompatibilityRing({
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeDasharray={`${dash} ${circumference}`}
+            initial={{ strokeDashoffset: 0, pathLength: 0 }}
+            animate={{ pathLength: clamped / 100 }}
+            transition={{ duration: duration.viz, ease: ease.out }}
             style={{
-              transition: 'stroke-dasharray 900ms cubic-bezier(0.22, 1, 0.36, 1)',
               filter: `drop-shadow(0 0 6px ${tone.stroke}66)`,
+              // Tie the spring to the dash length so the ring draw and the
+              // glow arrive together.
+              // `motionValue` is set via effect; framer drives `pathLength`
+              // directly, so no manual style mapping is needed here.
+              // Keeping the transition in one place avoids double-spring jitter.
+              ...(reduced ? { strokeDasharray: `${dash} ${circumference}` } : {}),
             }}
           />
         </svg>
+
         <div className="absolute flex flex-col items-center">
-          <span className={`font-display text-2xl font-semibold ${tone.text}`}>
-            {clamped.toFixed(clamped % 1 === 0 ? 0 : 1)}
-            <span className="text-sm">%</span>
-          </span>
+          <CountLabel value={clamped} tone={tone.text} reduced={Boolean(reduced)} />
           {!compact && <span className="text-[10px] text-slate-500">{tone.caption}</span>}
         </div>
       </div>
       {!compact && (
-        <span className="text-center text-[11px] font-medium text-slate-400">{label}</span>
+        <motion.span
+          className="text-center text-[11px] font-medium text-slate-400"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: reduced ? 0 : duration.viz, duration: duration.fast, ease: ease.out }}
+        >
+          {label}
+        </motion.span>
       )}
     </div>
+  )
+}
+
+function CountLabel({
+  value,
+  tone,
+  reduced,
+}: {
+  value: number
+  tone: string
+  reduced: boolean
+}) {
+  const animated = useCountUp(value, reduced ? 0 : duration.viz * 1000)
+
+  if (reduced) {
+    return (
+      <span className={`font-display text-2xl font-semibold ${tone}`}>
+        {value.toFixed(value % 1 === 0 ? 0 : 1)}
+        <span className="text-sm">%</span>
+      </span>
+    )
+  }
+
+  const clamped = Math.max(0, Math.min(100, value))
+  const display = animated.toFixed(clamped % 1 === 0 ? 0 : 1)
+
+  return (
+    <motion.span
+      className={`font-display text-2xl font-semibold tabular-nums ${tone}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.16, ease: ease.out }}
+    >
+      {display}
+      <span className="text-sm">%</span>
+    </motion.span>
   )
 }
