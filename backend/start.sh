@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo "=== Debug: Checking data directory ==="
+ls -la /data/ 2>&1 || echo "No /data directory"
+ls -la /data/skills/ 2>&1 || echo "No /data/skills directory"
+echo "DATA_DIR=$DATA_DIR"
+
 echo "=== Running migrations ==="
 alembic upgrade head
 
