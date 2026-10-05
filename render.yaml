@@ -2,7 +2,7 @@ services:
   - type: web
     name: skillbridge-api
     env: docker
-    rootDir: backend
+    rootDir: .
     dockerfilePath: ./Dockerfile
     plan: free
     healthCheckPath: /api/health
