@@ -5,7 +5,7 @@ services:
     rootDir: backend
     dockerfilePath: ./Dockerfile
     plan: free
-    healthCheckPath: /api/health/ready
+    healthCheckPath: /api/health
     envVars:
       - key: APP_ENV
         value: production
@@ -16,7 +16,7 @@ services:
       - key: COOKIE_SECURE
         value: true
       - key: CORS_ORIGINS
-        value: https://YOUR_FRONTEND_DOMAIN
+        value: https://skillbridge-frontend.onrender.com
       - key: SEED_DEMO_USER
         value: false
       - key: ENABLE_SEMANTIC_MATCHING
@@ -26,7 +26,9 @@ services:
       - key: UPLOAD_DIR
         value: /data/uploads
       - key: DATABASE_URL
-        sync: false # Set to your managed Postgres URL in Render
+        fromDatabase:
+          name: skillbridge-db
+          property: connectionString
       - key: AI_PROVIDER
         value: none
       - key: SIEVE_API_KEY
@@ -45,7 +47,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://skillbridge-api.onrender.com # Update to match your API URL
+        value: https://skillbridge-api.onrender.com
 
 databases:
   - name: skillbridge-db
