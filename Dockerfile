@@ -23,4 +23,4 @@ WORKDIR /app/backend
 
 EXPOSE 8000
 
-CMD ["sh", "./start.sh"]
+CMD ["sh", "-c", "echo '=== STARTUP ===' && ls -la /data/skills/ && alembic upgrade head && python -m app.seed; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
