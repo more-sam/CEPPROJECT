@@ -21,7 +21,8 @@ COPY data/ /data/
 
 WORKDIR /app/backend
 
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-# Run migrations, try to seed (but don't fail if seed fails), then start
-CMD ["sh", "-c", "alembic upgrade head; python -m app.seed || echo 'Seed failed but continuing'; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["./start.sh"]
