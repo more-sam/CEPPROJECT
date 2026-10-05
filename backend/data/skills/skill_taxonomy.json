@@ -1,0 +1,1239 @@
+{
+  "version": "1.0",
+  "description": "Controlled skill taxonomy for SkillBridge AI. Data-driven so it can be extended without touching extraction logic.",
+  "categories": [
+    "Programming",
+    "Frontend",
+    "Backend",
+    "Database",
+    "Cloud",
+    "DevOps",
+    "Data",
+    "AI/ML",
+    "Tools",
+    "Security",
+    "CS Fundamentals",
+    "QA",
+    "Soft Skills"
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "category": "Programming",
+      "description": "General-purpose language widely used for scripting, data work, AI and backends.",
+      "aliases": ["py", "python3", "python 3", "core python"],
+      "related": ["Pandas", "NumPy", "FastAPI", "Django", "scikit-learn"],
+      "prerequisites": [],
+      "estimated_hours": 40,
+      "resources": [
+        { "title": "Python official tutorial", "url": "https://docs.python.org/3/tutorial/" }
+      ]
+    },
+    {
+      "name": "Java",
+      "category": "Programming",
+      "description": "Statically typed, object-oriented language common in enterprise backends.",
+      "aliases": ["java8", "java 8", "java 11", "java 17", "core java"],
+      "related": ["Spring Boot", "Object-Oriented Programming"],
+      "prerequisites": ["Object-Oriented Programming"],
+      "estimated_hours": 60,
+      "resources": []
+    },
+    {
+      "name": "JavaScript",
+      "category": "Programming",
+      "description": "The language of the web browser; also runs on servers via Node.js.",
+      "aliases": ["js", "es6", "javascript es6", "ecmascript", "vanilla js"],
+      "related": ["TypeScript", "React", "Node.js"],
+      "prerequisites": [],
+      "estimated_hours": 40,
+      "resources": [
+        { "title": "MDN JavaScript guide", "url": "https://developer.mozilla.org/docs/Web/JavaScript" }
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "category": "Programming",
+      "description": "JavaScript with static type checking.",
+      "aliases": ["ts", "typescript 5"],
+      "related": ["JavaScript", "React"],
+      "prerequisites": ["JavaScript"],
+      "estimated_hours": 20,
+      "resources": [
+        { "title": "TypeScript handbook", "url": "https://www.typescriptlang.org/docs/handbook/intro.html" }
+      ]
+    },
+    {
+      "name": "C",
+      "category": "Programming",
+      "description": "Low-level procedural language, the base of many systems.",
+      "aliases": ["c language", "c programming", "ansi c"],
+      "related": ["C++", "Operating Systems"],
+      "prerequisites": [],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "C++",
+      "category": "Programming",
+      "description": "Systems language adding objects, templates and the STL to C.",
+      "aliases": ["cpp", "c plus plus", "cplusplus"],
+      "related": ["C", "Data Structures", "Algorithms"],
+      "prerequisites": ["C"],
+      "estimated_hours": 70,
+      "resources": []
+    },
+    {
+      "name": "C#",
+      "category": "Programming",
+      "description": "Microsoft's object-oriented language for .NET applications.",
+      "aliases": ["csharp", "c sharp", "dotnet c#"],
+      "related": ["Object-Oriented Programming"],
+      "prerequisites": ["Object-Oriented Programming"],
+      "estimated_hours": 50,
+      "resources": []
+    },
+    {
+      "name": "Go",
+      "category": "Programming",
+      "description": "Compiled language built for simple, concurrent services.",
+      "aliases": ["golang", "go lang"],
+      "related": ["Microservices", "Docker"],
+      "prerequisites": [],
+      "estimated_hours": 35,
+      "resources": []
+    },
+    {
+      "name": "Rust",
+      "category": "Programming",
+      "description": "Memory-safe systems language without a garbage collector.",
+      "aliases": ["rustlang", "rust lang"],
+      "related": ["C++", "Operating Systems"],
+      "prerequisites": ["C++"],
+      "estimated_hours": 70,
+      "resources": []
+    },
+    {
+      "name": "Kotlin",
+      "category": "Programming",
+      "description": "Concise JVM language used for Android and backend services.",
+      "aliases": ["kotlin android"],
+      "related": ["Java", "Object-Oriented Programming"],
+      "prerequisites": ["Java"],
+      "estimated_hours": 35,
+      "resources": []
+    },
+    {
+      "name": "Swift",
+      "category": "Programming",
+      "description": "Apple's language for iOS and macOS development.",
+      "aliases": ["swift5", "ios swift"],
+      "related": ["Kotlin"],
+      "prerequisites": [],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "PHP",
+      "category": "Programming",
+      "description": "Server-side scripting language used by many content platforms.",
+      "aliases": ["php8", "php 8"],
+      "related": ["MySQL", "REST APIs"],
+      "prerequisites": [],
+      "estimated_hours": 35,
+      "resources": []
+    },
+
+    {
+      "name": "HTML",
+      "category": "Frontend",
+      "description": "Markup language defining the structure of web pages.",
+      "aliases": ["html5", "semantic html"],
+      "related": ["CSS", "Responsive Design", "Web Accessibility"],
+      "prerequisites": [],
+      "estimated_hours": 15,
+      "resources": [
+        { "title": "MDN HTML basics", "url": "https://developer.mozilla.org/docs/Learn/Getting_started_with_the_web/HTML_basics" }
+      ]
+    },
+    {
+      "name": "CSS",
+      "category": "Frontend",
+      "description": "Styling language for layout, typography and visual design.",
+      "aliases": ["css3", "flexbox", "css grid", "cascading style sheets"],
+      "related": ["HTML", "Tailwind CSS", "Responsive Design"],
+      "prerequisites": ["HTML"],
+      "estimated_hours": 25,
+      "resources": [
+        { "title": "MDN CSS first steps", "url": "https://developer.mozilla.org/docs/Learn/CSS/First_steps" }
+      ]
+    },
+    {
+      "name": "React",
+      "category": "Frontend",
+      "description": "Component-based library for building user interfaces.",
+      "aliases": ["reactjs", "react.js", "react js", "react hooks"],
+      "related": ["JavaScript", "Redux", "Next.js", "TypeScript"],
+      "prerequisites": ["JavaScript", "HTML", "CSS"],
+      "estimated_hours": 45,
+      "resources": [
+        { "title": "React learn", "url": "https://react.dev/learn" }
+      ]
+    },
+    {
+      "name": "Next.js",
+      "category": "Frontend",
+      "description": "React framework with server rendering and file-based routing.",
+      "aliases": ["nextjs", "next js"],
+      "related": ["React", "TypeScript"],
+      "prerequisites": ["React"],
+      "estimated_hours": 30,
+      "resources": []
+    },
+    {
+      "name": "Angular",
+      "category": "Frontend",
+      "description": "Opinionated TypeScript frontend framework from Google.",
+      "aliases": ["angularjs", "angular 2+", "ng"],
+      "related": ["TypeScript", "RxJS"],
+      "prerequisites": ["TypeScript"],
+      "estimated_hours": 50,
+      "resources": []
+    },
+    {
+      "name": "Vue",
+      "category": "Frontend",
+      "description": "Approachable progressive JavaScript framework for interfaces.",
+      "aliases": ["vuejs", "vue.js", "vue 3"],
+      "related": ["JavaScript", "HTML"],
+      "prerequisites": ["JavaScript"],
+      "estimated_hours": 35,
+      "resources": []
+    },
+    {
+      "name": "Tailwind CSS",
+      "category": "Frontend",
+      "description": "Utility-first CSS framework for building designs directly in markup.",
+      "aliases": ["tailwind", "tailwindcss"],
+      "related": ["CSS", "React"],
+      "prerequisites": ["CSS"],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "Redux",
+      "category": "Frontend",
+      "description": "Predictable state container commonly paired with React.",
+      "aliases": ["redux toolkit", "rtk"],
+      "related": ["React", "JavaScript"],
+      "prerequisites": ["React"],
+      "estimated_hours": 15,
+      "resources": []
+    },
+    {
+      "name": "Responsive Design",
+      "category": "Frontend",
+      "description": "Building layouts that adapt across screen sizes and devices.",
+      "aliases": ["mobile first", "responsive web design", "media queries"],
+      "related": ["CSS", "HTML", "Web Accessibility"],
+      "prerequisites": ["CSS"],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "Web Accessibility",
+      "category": "Frontend",
+      "description": "Making interfaces usable with keyboards and assistive technology.",
+      "aliases": ["a11y", "wcag", "accessibility", "aria"],
+      "related": ["HTML", "Responsive Design"],
+      "prerequisites": ["HTML"],
+      "estimated_hours": 14,
+      "resources": []
+    },
+    {
+      "name": "Figma",
+      "category": "Frontend",
+      "description": "Collaborative interface design and prototyping tool.",
+      "aliases": ["figma design", "figma prototyping"],
+      "related": ["UI/UX Design"],
+      "prerequisites": [],
+      "estimated_hours": 12,
+      "resources": []
+    },
+
+    {
+      "name": "Node.js",
+      "category": "Backend",
+      "description": "JavaScript runtime for building server-side applications.",
+      "aliases": ["node", "nodejs", "node js"],
+      "related": ["JavaScript", "Express", "REST APIs"],
+      "prerequisites": ["JavaScript"],
+      "estimated_hours": 30,
+      "resources": [
+        { "title": "Node.js introduction", "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs" }
+      ]
+    },
+    {
+      "name": "Express",
+      "category": "Backend",
+      "description": "Minimal Node.js web framework for APIs and web servers.",
+      "aliases": ["expressjs", "express.js", "express js"],
+      "related": ["Node.js", "REST APIs"],
+      "prerequisites": ["Node.js"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "FastAPI",
+      "category": "Backend",
+      "description": "Modern async Python framework with automatic validation and docs.",
+      "aliases": ["fast api", "fast-api"],
+      "related": ["Python", "REST APIs", "Pydantic"],
+      "prerequisites": ["Python", "REST APIs"],
+      "estimated_hours": 20,
+      "resources": [
+        { "title": "FastAPI tutorial", "url": "https://fastapi.tiangolo.com/tutorial/" }
+      ]
+    },
+    {
+      "name": "Django",
+      "category": "Backend",
+      "description": "Batteries-included Python web framework with an ORM and admin.",
+      "aliases": ["django rest framework", "drf", "django rest"],
+      "related": ["Python", "ORM", "PostgreSQL"],
+      "prerequisites": ["Python", "REST APIs"],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "Flask",
+      "category": "Backend",
+      "description": "Lightweight Python micro-framework for small services.",
+      "aliases": ["flask api"],
+      "related": ["Python", "REST APIs"],
+      "prerequisites": ["Python"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Spring Boot",
+      "category": "Backend",
+      "description": "Java framework for production-ready standalone services.",
+      "aliases": ["springboot", "spring"],
+      "related": ["Java", "REST APIs", "Microservices"],
+      "prerequisites": ["Java", "REST APIs"],
+      "estimated_hours": 50,
+      "resources": []
+    },
+    {
+      "name": "REST APIs",
+      "category": "Backend",
+      "description": "Designing HTTP interfaces around resources and standard verbs.",
+      "aliases": ["rest", "rest api", "restful", "restful api", "rest api development", "web apis", "api development", "building web apis", "http apis"],
+      "related": ["API Design", "FastAPI", "Express", "Postman"],
+      "prerequisites": ["HTTP Basics"],
+      "estimated_hours": 20,
+      "resources": [
+        { "title": "MDN HTTP overview", "url": "https://developer.mozilla.org/docs/Web/HTTP/Overview" }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "category": "Backend",
+      "description": "Query language and runtime for flexible APIs.",
+      "aliases": ["graph ql", "apollo graphql"],
+      "related": ["REST APIs", "API Design"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "Microservices",
+      "category": "Backend",
+      "description": "Architecting systems as independently deployable services.",
+      "aliases": ["microservice architecture", "micro services"],
+      "related": ["Docker", "Kubernetes", "System Design"],
+      "prerequisites": ["REST APIs", "Docker"],
+      "estimated_hours": 30,
+      "resources": []
+    },
+    {
+      "name": "Authentication & Authorization",
+      "category": "Backend",
+      "description": "Identity, sessions, tokens and permission models.",
+      "aliases": ["jwt", "oauth", "oauth2", "auth", "authentication", "authorization", "session management"],
+      "related": ["REST APIs", "Cybersecurity", "OWASP Top 10"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "WebSockets",
+      "category": "Backend",
+      "description": "Full-duplex communication channels over a single connection.",
+      "aliases": ["websocket", "socket.io", "realtime apis"],
+      "related": ["REST APIs", "Node.js"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 14,
+      "resources": []
+    },
+    {
+      "name": "API Design",
+      "category": "Backend",
+      "description": "Versioning, pagination, error contracts and documentation.",
+      "aliases": ["api architecture", "openapi", "swagger", "api documentation"],
+      "related": ["REST APIs", "GraphQL"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 16,
+      "resources": []
+    },
+
+    {
+      "name": "SQL",
+      "category": "Database",
+      "description": "Declarative language for querying relational databases.",
+      "aliases": ["structured query language", "sql queries", "joins", "sql query"],
+      "related": ["PostgreSQL", "MySQL", "Database Design"],
+      "prerequisites": [],
+      "estimated_hours": 30,
+      "resources": [
+        { "title": "PostgreSQL tutorial", "url": "https://www.postgresql.org/docs/current/tutorial.html" }
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "category": "Database",
+      "description": "Advanced open-source relational database.",
+      "aliases": ["postgres", "postgre sql", "psql", "postgresql 16"],
+      "related": ["SQL", "Database Design", "Database Indexing"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "MySQL",
+      "category": "Database",
+      "description": "Widely deployed open-source relational database.",
+      "aliases": ["my sql", "mariadb"],
+      "related": ["SQL", "Database Design"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "MongoDB",
+      "category": "Database",
+      "description": "Document-oriented NoSQL database.",
+      "aliases": ["mongo", "mongodb atlas", "mongoose"],
+      "related": ["Node.js", "Database Design"],
+      "prerequisites": [],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "Redis",
+      "category": "Database",
+      "description": "In-memory key-value store used for caching and queues.",
+      "aliases": ["redis cache", "redis cache store"],
+      "related": ["Database Design", "Microservices"],
+      "prerequisites": [],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "SQLite",
+      "category": "Database",
+      "description": "Embedded file-based relational database.",
+      "aliases": ["sqlite3"],
+      "related": ["SQL"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 6,
+      "resources": []
+    },
+    {
+      "name": "Database Design",
+      "category": "Database",
+      "description": "Normalisation, relationships and schema modelling.",
+      "aliases": ["data modelling", "data modeling", "schema design", "erd", "normalization"],
+      "related": ["SQL", "DBMS", "Database Indexing"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "Database Indexing",
+      "category": "Database",
+      "description": "Query plans, indexes and performance tuning.",
+      "aliases": ["query optimization", "query optimisation", "index tuning", "explain plan"],
+      "related": ["PostgreSQL", "Database Design"],
+      "prerequisites": ["Database Design"],
+      "estimated_hours": 14,
+      "resources": []
+    },
+    {
+      "name": "ORM",
+      "category": "Database",
+      "description": "Mapping application objects to relational tables.",
+      "aliases": ["sqlalchemy", "hibernate", "sequelize", "prisma", "entity framework"],
+      "related": ["SQL", "Database Design"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 16,
+      "resources": []
+    },
+
+    {
+      "name": "AWS",
+      "category": "Cloud",
+      "description": "Amazon Web Services cloud platform.",
+      "aliases": ["amazon web services", "ec2", "s3", "lambda", "aws cloud"],
+      "related": ["Cloud Storage", "Serverless", "Docker"],
+      "prerequisites": ["Linux"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "Azure",
+      "category": "Cloud",
+      "description": "Microsoft's cloud platform.",
+      "aliases": ["microsoft azure", "azure cloud"],
+      "related": ["Cloud Storage", "Docker"],
+      "prerequisites": ["Linux"],
+      "estimated_hours": 38,
+      "resources": []
+    },
+    {
+      "name": "GCP",
+      "category": "Cloud",
+      "description": "Google Cloud Platform.",
+      "aliases": ["google cloud", "google cloud platform"],
+      "related": ["Cloud Storage", "Kubernetes"],
+      "prerequisites": ["Linux"],
+      "estimated_hours": 36,
+      "resources": []
+    },
+    {
+      "name": "Serverless",
+      "category": "Cloud",
+      "description": "Event-driven compute without managing servers.",
+      "aliases": ["serverless computing", "faas", "lambda functions", "cloud functions"],
+      "related": ["AWS", "Microservices"],
+      "prerequisites": ["AWS"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Cloud Storage",
+      "category": "Cloud",
+      "description": "Object storage services for files and backups.",
+      "aliases": ["s3 buckets", "blob storage", "object storage"],
+      "related": ["AWS", "Azure"],
+      "prerequisites": [],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Cloud Networking",
+      "category": "Cloud",
+      "description": "VPCs, subnets, load balancers and DNS in the cloud.",
+      "aliases": ["vpc", "load balancer", "cloud dns"],
+      "related": ["Computer Networks", "AWS"],
+      "prerequisites": ["Computer Networks"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+
+    {
+      "name": "Git",
+      "category": "DevOps",
+      "description": "Distributed version control system.",
+      "aliases": ["git scm", "version control", "git version control"],
+      "related": ["GitHub", "GitLab", "CI/CD"],
+      "prerequisites": [],
+      "estimated_hours": 15,
+      "resources": [
+        { "title": "Pro Git book", "url": "https://git-scm.com/book/en/v2" }
+      ]
+    },
+    {
+      "name": "GitHub",
+      "category": "DevOps",
+      "description": "Hosting and collaboration platform for Git repositories.",
+      "aliases": ["github actions workflows", "gh"],
+      "related": ["Git", "GitHub Actions"],
+      "prerequisites": ["Git"],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Docker",
+      "category": "DevOps",
+      "description": "Containerising applications and their dependencies.",
+      "aliases": ["dockerfile", "docker compose", "docker-compose", "containerization", "containerisation", "containers"],
+      "related": ["Kubernetes", "Linux", "CI/CD"],
+      "prerequisites": ["Linux"],
+      "estimated_hours": 25,
+      "resources": [
+        { "title": "Docker get started", "url": "https://docs.docker.com/get-started/" }
+      ]
+    },
+    {
+      "name": "Kubernetes",
+      "category": "DevOps",
+      "description": "Orchestrating containers across a cluster.",
+      "aliases": ["k8s", "kube"],
+      "related": ["Docker", "Microservices", "Monitoring & Logging"],
+      "prerequisites": ["Docker"],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "GitHub Actions",
+      "category": "DevOps",
+      "description": "CI/CD workflows hosted on GitHub.",
+      "aliases": ["gh actions", "workflows"],
+      "related": ["GitHub", "CI/CD"],
+      "prerequisites": ["GitHub"],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "CI/CD",
+      "category": "DevOps",
+      "description": "Automated build, test and deployment pipelines.",
+      "aliases": ["ci cd", "continuous integration", "continuous deployment", "continuous delivery", "gitlab ci", "jenkins"],
+      "related": ["GitHub Actions", "Docker", "Unit Testing"],
+      "prerequisites": ["Git", "Unit Testing"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Linux",
+      "category": "DevOps",
+      "description": "Command line, permissions, processes and shell scripting.",
+      "aliases": ["unix", "bash", "shell scripting", "ubuntu", "linux commands"],
+      "related": ["Docker", "Nginx", "Operating Systems"],
+      "prerequisites": [],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "Nginx",
+      "category": "DevOps",
+      "description": "Web server and reverse proxy configuration.",
+      "aliases": ["nginx configuration", "reverse proxy"],
+      "related": ["Linux", "Computer Networks"],
+      "prerequisites": ["Linux"],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "Terraform",
+      "category": "DevOps",
+      "description": "Declarative infrastructure as code.",
+      "aliases": ["iac", "infrastructure as code", "terraform cloud"],
+      "related": ["AWS", "CI/CD"],
+      "prerequisites": ["AWS"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "Monitoring & Logging",
+      "category": "DevOps",
+      "description": "Observability: metrics, logs and alerting.",
+      "aliases": ["observability", "grafana", "prometheus", "logging", "monitoring"],
+      "related": ["Kubernetes", "Microservices"],
+      "prerequisites": ["Docker"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+
+    {
+      "name": "Pandas",
+      "category": "Data",
+      "description": "DataFrame library for loading, cleaning and analysing tabular data.",
+      "aliases": ["python pandas", "dataframes", "data frame"],
+      "related": ["Python", "NumPy", "Data Analysis"],
+      "prerequisites": ["Python"],
+      "estimated_hours": 25,
+      "resources": [
+        { "title": "pandas getting started", "url": "https://pandas.pydata.org/docs/getting_started/index.html" }
+      ]
+    },
+    {
+      "name": "NumPy",
+      "category": "Data",
+      "description": "Fast numerical arrays and linear algebra in Python.",
+      "aliases": ["numpy arrays", "np"],
+      "related": ["Python", "Pandas"],
+      "prerequisites": ["Python"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Matplotlib",
+      "category": "Data",
+      "description": "Plotting library for charts and exploratory visualisation.",
+      "aliases": ["pyplot", "matplotlib plots"],
+      "related": ["Python", "Pandas", "Data Visualization"],
+      "prerequisites": ["Python"],
+      "estimated_hours": 14,
+      "resources": []
+    },
+    {
+      "name": "Seaborn",
+      "category": "Data",
+      "description": "Statistical plotting built on Matplotlib.",
+      "aliases": ["sns", "seaborn plots"],
+      "related": ["Matplotlib", "Data Visualization"],
+      "prerequisites": ["Matplotlib"],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Power BI",
+      "category": "Data",
+      "description": "Business intelligence dashboards from Microsoft.",
+      "aliases": ["powerbi", "power bi dashboards"],
+      "related": ["Data Visualization", "Excel"],
+      "prerequisites": ["Excel"],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "Tableau",
+      "category": "Data",
+      "description": "Visual analytics and dashboarding platform.",
+      "aliases": ["tableau desktop", "tableau public"],
+      "related": ["Data Visualization", "Power BI"],
+      "prerequisites": [],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "Excel",
+      "category": "Data",
+      "description": "Spreadsheet analysis, pivot tables and formulas.",
+      "aliases": ["ms excel", "microsoft excel", "spreadsheets", "advanced excel", "pivot tables"],
+      "related": ["Data Analysis", "Power BI"],
+      "prerequisites": [],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Data Analysis",
+      "category": "Data",
+      "description": "Exploring data to answer concrete questions.",
+      "aliases": ["data analytics", "exploratory data analysis", "eda", "analytics"],
+      "related": ["Pandas", "SQL", "Data Visualization"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 30,
+      "resources": []
+    },
+    {
+      "name": "Data Visualization",
+      "category": "Data",
+      "description": "Communicating findings clearly through charts.",
+      "aliases": ["data visualisation", "dashboards", "charting"],
+      "related": ["Matplotlib", "Power BI", "Data Analysis"],
+      "prerequisites": ["Data Analysis"],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "ETL",
+      "category": "Data",
+      "description": "Extract, transform and load pipelines for data movement.",
+      "aliases": ["data pipelines", "data pipeline", "etl pipelines", "airflow"],
+      "related": ["SQL", "Data Analysis", "Docker"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 24,
+      "resources": []
+    },
+
+    {
+      "name": "Machine Learning",
+      "category": "AI/ML",
+      "description": "Building models that learn patterns from data.",
+      "aliases": ["ml", "machine-learning", "supervised learning", "predictive modeling"],
+      "related": ["scikit-learn", "Feature Engineering", "Model Evaluation"],
+      "prerequisites": ["Python", "NumPy", "Pandas"],
+      "estimated_hours": 50,
+      "resources": []
+    },
+    {
+      "name": "Deep Learning",
+      "category": "AI/ML",
+      "description": "Neural networks for vision, language and sequence tasks.",
+      "aliases": ["neural networks", "neural nets", "dl", "cnn", "rnn"],
+      "related": ["TensorFlow", "PyTorch", "Machine Learning"],
+      "prerequisites": ["Machine Learning"],
+      "estimated_hours": 60,
+      "resources": []
+    },
+    {
+      "name": "NLP",
+      "category": "AI/ML",
+      "description": "Processing and understanding human language.",
+      "aliases": ["natural language processing", "text mining", "text processing", "spacy", "nltk"],
+      "related": ["Machine Learning", "Deep Learning", "LLM Integration"],
+      "prerequisites": ["Machine Learning"],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "scikit-learn",
+      "category": "AI/ML",
+      "description": "Classical machine learning toolkit in Python.",
+      "aliases": ["sklearn", "scikit learn", "sci-kit learn"],
+      "related": ["Machine Learning", "NumPy", "Model Evaluation"],
+      "prerequisites": ["Machine Learning", "NumPy"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "TensorFlow",
+      "category": "AI/ML",
+      "description": "Deep learning framework by Google.",
+      "aliases": ["tf", "keras", "tensorflow 2"],
+      "related": ["Deep Learning", "PyTorch"],
+      "prerequisites": ["Deep Learning"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "PyTorch",
+      "category": "AI/ML",
+      "description": "Flexible deep learning framework popular in research.",
+      "aliases": ["torch", "pytorch lightning"],
+      "related": ["Deep Learning", "TensorFlow"],
+      "prerequisites": ["Deep Learning"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "Computer Vision",
+      "category": "AI/ML",
+      "description": "Extracting information from images and video.",
+      "aliases": ["cv", "opencv", "image processing"],
+      "related": ["Deep Learning", "PyTorch"],
+      "prerequisites": ["Deep Learning"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "Feature Engineering",
+      "category": "AI/ML",
+      "description": "Turning raw data into informative model inputs.",
+      "aliases": ["feature extraction", "feature selection"],
+      "related": ["Machine Learning", "Pandas"],
+      "prerequisites": ["Machine Learning"],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "Model Evaluation",
+      "category": "AI/ML",
+      "description": "Cross-validation, metrics and avoiding leakage.",
+      "aliases": ["model metrics", "cross validation", "hyperparameter tuning", "evaluation metrics"],
+      "related": ["scikit-learn", "Machine Learning"],
+      "prerequisites": ["Machine Learning"],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "LLM Integration",
+      "category": "AI/ML",
+      "description": "Calling and grounding large language models in applications.",
+      "aliases": ["llm", "generative ai", "genai", "openai api", "large language models", "rag", "prompt engineering"],
+      "related": ["NLP", "REST APIs", "Prompt Engineering"],
+      "prerequisites": ["NLP", "REST APIs"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "Prompt Engineering",
+      "category": "AI/ML",
+      "description": "Designing instructions that reliably steer model output.",
+      "aliases": ["prompt design", "prompting"],
+      "related": ["LLM Integration"],
+      "prerequisites": [],
+      "estimated_hours": 12,
+      "resources": []
+    },
+    {
+      "name": "MLOps",
+      "category": "AI/ML",
+      "description": "Deploying, versioning and monitoring models in production.",
+      "aliases": ["ml ops", "model deployment", "model serving"],
+      "related": ["Docker", "CI/CD", "Machine Learning"],
+      "prerequisites": ["Machine Learning", "Docker"],
+      "estimated_hours": 30,
+      "resources": []
+    },
+
+    {
+      "name": "GitLab",
+      "category": "Tools",
+      "description": "Git hosting with built-in CI pipelines.",
+      "aliases": ["gitlab ci cd"],
+      "related": ["Git", "CI/CD"],
+      "prerequisites": ["Git"],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Postman",
+      "category": "Tools",
+      "description": "Exploring and testing HTTP APIs.",
+      "aliases": ["postman collections", "api testing tool"],
+      "related": ["REST APIs", "API Testing"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 8,
+      "resources": []
+    },
+    {
+      "name": "Jira",
+      "category": "Tools",
+      "description": "Issue tracking and agile project management.",
+      "aliases": ["atlassian jira", "jira boards"],
+      "related": ["Agile", "Scrum"],
+      "prerequisites": [],
+      "estimated_hours": 6,
+      "resources": []
+    },
+    {
+      "name": "VS Code",
+      "category": "Tools",
+      "description": "Extensible source code editor.",
+      "aliases": ["vscode", "visual studio code"],
+      "related": ["Debugging"],
+      "prerequisites": [],
+      "estimated_hours": 4,
+      "resources": []
+    },
+    {
+      "name": "Agile",
+      "category": "Tools",
+      "description": "Iterative delivery with short feedback cycles.",
+      "aliases": ["agile methodology", "agile development"],
+      "related": ["Scrum", "Jira"],
+      "prerequisites": [],
+      "estimated_hours": 6,
+      "resources": []
+    },
+    {
+      "name": "Scrum",
+      "category": "Tools",
+      "description": "Sprint-based agile framework with defined roles.",
+      "aliases": ["scrum master", "sprints", "standups"],
+      "related": ["Agile", "Jira"],
+      "prerequisites": ["Agile"],
+      "estimated_hours": 6,
+      "resources": []
+    },
+    {
+      "name": "Unit Testing",
+      "category": "Tools",
+      "description": "Automated tests for individual units of code.",
+      "aliases": ["pytest", "jest", "junit", "test driven development", "tdd", "writing tests", "unit tests"],
+      "related": ["CI/CD", "Debugging", "Test Automation"],
+      "prerequisites": [],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Debugging",
+      "category": "Tools",
+      "description": "Diagnosing and fixing defects systematically.",
+      "aliases": ["debugging skills", "troubleshooting", "root cause analysis"],
+      "related": ["Unit Testing", "Problem Solving"],
+      "prerequisites": [],
+      "estimated_hours": 12,
+      "resources": []
+    },
+
+    {
+      "name": "Cybersecurity",
+      "category": "Security",
+      "description": "Protecting systems, data and networks from attack.",
+      "aliases": ["security", "information security", "infosec", "application security", "appsec"],
+      "related": ["OWASP Top 10", "Network Security", "Computer Networks"],
+      "prerequisites": ["Computer Networks"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "OWASP Top 10",
+      "category": "Security",
+      "description": "The most critical web application security risks.",
+      "aliases": ["owasp", "owasp 10", "web security"],
+      "related": ["Cybersecurity", "Authentication & Authorization"],
+      "prerequisites": ["Cybersecurity"],
+      "estimated_hours": 15,
+      "resources": []
+    },
+    {
+      "name": "Penetration Testing",
+      "category": "Security",
+      "description": "Authorised testing of systems for exploitable weaknesses.",
+      "aliases": ["pentesting", "pen testing", "ethical hacking", "vulnerability assessment"],
+      "related": ["Cybersecurity", "Linux"],
+      "prerequisites": ["Cybersecurity", "Linux"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "Network Security",
+      "category": "Security",
+      "description": "Firewalls, TLS and securing network traffic.",
+      "aliases": ["firewalls", "tls", "ssl", "network defence", "network defense"],
+      "related": ["Computer Networks", "Cybersecurity"],
+      "prerequisites": ["Computer Networks"],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "Cryptography",
+      "category": "Security",
+      "description": "Encryption, hashing and key management fundamentals.",
+      "aliases": ["encryption", "hashing", "public key cryptography"],
+      "related": ["Cybersecurity", "Network Security"],
+      "prerequisites": ["Cybersecurity"],
+      "estimated_hours": 24,
+      "resources": []
+    },
+
+    {
+      "name": "Data Structures",
+      "category": "CS Fundamentals",
+      "description": "Arrays, lists, trees, graphs, heaps and hash tables.",
+      "aliases": ["ds", "dsa", "data structure"],
+      "related": ["Algorithms", "Problem Solving"],
+      "prerequisites": [],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "Algorithms",
+      "category": "CS Fundamentals",
+      "description": "Sorting, searching, dynamic programming and complexity analysis.",
+      "aliases": ["algo", "algorithm design", "time complexity", "big o"],
+      "related": ["Data Structures", "Problem Solving"],
+      "prerequisites": ["Data Structures"],
+      "estimated_hours": 45,
+      "resources": []
+    },
+    {
+      "name": "Object-Oriented Programming",
+      "category": "CS Fundamentals",
+      "description": "Encapsulation, inheritance and polymorphism.",
+      "aliases": ["oop", "oops", "object oriented design", "oo design"],
+      "related": ["Java", "System Design"],
+      "prerequisites": [],
+      "estimated_hours": 20,
+      "resources": []
+    },
+    {
+      "name": "Operating Systems",
+      "category": "CS Fundamentals",
+      "description": "Processes, threads, memory and scheduling.",
+      "aliases": ["os", "process management", "memory management"],
+      "related": ["Linux", "Computer Networks"],
+      "prerequisites": [],
+      "estimated_hours": 30,
+      "resources": []
+    },
+    {
+      "name": "DBMS",
+      "category": "CS Fundamentals",
+      "description": "Database theory: transactions, ACID and normalisation.",
+      "aliases": ["database management systems", "transactions", "acid"],
+      "related": ["SQL", "Database Design"],
+      "prerequisites": ["SQL"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "Computer Networks",
+      "category": "CS Fundamentals",
+      "description": "TCP/IP, DNS, HTTP and the OSI layers.",
+      "aliases": ["networking", "cn", "tcp ip", "http protocol", "osi model"],
+      "related": ["Network Security", "Nginx"],
+      "prerequisites": [],
+      "estimated_hours": 30,
+      "resources": []
+    },
+    {
+      "name": "System Design",
+      "category": "CS Fundamentals",
+      "description": "Designing scalable, reliable distributed systems.",
+      "aliases": ["hld", "low level design", "high level design", "scalability", "distributed systems"],
+      "related": ["Microservices", "Database Indexing"],
+      "prerequisites": ["Data Structures", "Computer Networks", "DBMS"],
+      "estimated_hours": 40,
+      "resources": []
+    },
+    {
+      "name": "Problem Solving",
+      "category": "CS Fundamentals",
+      "description": "Decomposing unfamiliar problems into workable steps.",
+      "aliases": ["analytical skills", "aptitude", "critical reasoning"],
+      "related": ["Data Structures", "Critical Thinking"],
+      "prerequisites": [],
+      "estimated_hours": 15,
+      "resources": []
+    },
+    {
+      "name": "Compiler Design",
+      "category": "CS Fundamentals",
+      "description": "Lexing, parsing and code generation.",
+      "aliases": ["compilers", "parsing", "lexical analysis"],
+      "related": ["Algorithms", "C"],
+      "prerequisites": ["Algorithms", "C"],
+      "estimated_hours": 35,
+      "resources": []
+    },
+
+    {
+      "name": "Manual Testing",
+      "category": "QA",
+      "description": "Exploratory and scripted testing of software behaviour.",
+      "aliases": ["qa testing", "quality assurance", "functional testing", "test cases"],
+      "related": ["Test Automation", "API Testing"],
+      "prerequisites": [],
+      "estimated_hours": 18,
+      "resources": []
+    },
+    {
+      "name": "Selenium",
+      "category": "QA",
+      "description": "Browser automation for end-to-end web tests.",
+      "aliases": ["selenium webdriver", "webdriver"],
+      "related": ["Test Automation", "Python"],
+      "prerequisites": ["Test Automation"],
+      "estimated_hours": 22,
+      "resources": []
+    },
+    {
+      "name": "Test Automation",
+      "category": "QA",
+      "description": "Repeatable automated test suites integrated into pipelines.",
+      "aliases": ["automation testing", "automated testing", "e2e testing", "end to end testing", "playwright", "cypress"],
+      "related": ["Selenium", "Unit Testing", "CI/CD"],
+      "prerequisites": ["Unit Testing"],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "API Testing",
+      "category": "QA",
+      "description": "Verifying request/response contracts and error handling.",
+      "aliases": ["rest api testing", "contract testing"],
+      "related": ["Postman", "REST APIs"],
+      "prerequisites": ["REST APIs"],
+      "estimated_hours": 14,
+      "resources": []
+    },
+
+    {
+      "name": "Communication",
+      "category": "Soft Skills",
+      "description": "Explaining ideas clearly to technical and non-technical listeners.",
+      "aliases": ["communication skills", "verbal communication", "written communication"],
+      "related": ["Presentation Skills", "Teamwork"],
+      "prerequisites": [],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Teamwork",
+      "category": "Soft Skills",
+      "description": "Collaborating effectively within a team.",
+      "aliases": ["team player", "collaboration", "collaborative"],
+      "related": ["Communication", "Agile"],
+      "prerequisites": [],
+      "estimated_hours": 8,
+      "resources": []
+    },
+    {
+      "name": "Time Management",
+      "category": "Soft Skills",
+      "description": "Prioritising work and meeting commitments.",
+      "aliases": ["prioritisation", "prioritization", "organisation skills"],
+      "related": ["Agile"],
+      "prerequisites": [],
+      "estimated_hours": 8,
+      "resources": []
+    },
+    {
+      "name": "Presentation Skills",
+      "category": "Soft Skills",
+      "description": "Presenting work convincingly to an audience.",
+      "aliases": ["public speaking", "presenting"],
+      "related": ["Communication"],
+      "prerequisites": ["Communication"],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Technical Writing",
+      "category": "Soft Skills",
+      "description": "Documentation, README files and design notes.",
+      "aliases": ["documentation", "docs writing", "report writing"],
+      "related": ["Communication"],
+      "prerequisites": ["Communication"],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "Critical Thinking",
+      "category": "Soft Skills",
+      "description": "Evaluating evidence and challenging assumptions.",
+      "aliases": ["analytical thinking", "logical reasoning"],
+      "related": ["Problem Solving"],
+      "prerequisites": [],
+      "estimated_hours": 10,
+      "resources": []
+    },
+    {
+      "name": "UI/UX Design",
+      "category": "Soft Skills",
+      "description": "Designing usable, coherent product interfaces.",
+      "aliases": ["ui design", "ux design", "user experience", "user interface design", "product design"],
+      "related": ["Figma", "Web Accessibility", "Responsive Design"],
+      "prerequisites": [],
+      "estimated_hours": 25,
+      "resources": []
+    },
+    {
+      "name": "HTTP Basics",
+      "category": "CS Fundamentals",
+      "description": "Request methods, status codes, headers and cookies.",
+      "aliases": ["http", "http protocol basics", "status codes", "rest verbs"],
+      "related": ["Computer Networks", "REST APIs"],
+      "prerequisites": [],
+      "estimated_hours": 8,
+      "resources": []
+    },
+    {
+      "name": "Pydantic",
+      "category": "Backend",
+      "description": "Data validation and settings management for Python.",
+      "aliases": ["pydantic v2", "base model"],
+      "related": ["FastAPI", "Python"],
+      "prerequisites": ["Python"],
+      "estimated_hours": 8,
+      "resources": []
+    },
+    {
+      "name": "RxJS",
+      "category": "Frontend",
+      "description": "Reactive programming with observables in JavaScript.",
+      "aliases": ["reactive extensions"],
+      "related": ["Angular", "TypeScript"],
+      "prerequisites": ["TypeScript"],
+      "estimated_hours": 15,
+      "resources": []
+    }
+  ]
+}

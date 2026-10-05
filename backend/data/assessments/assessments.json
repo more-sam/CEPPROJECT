@@ -1,0 +1,139 @@
+{
+  "version": "1.0",
+  "note": "Demo seed assessment content. Scores indicate recall of the concepts tested here and are not a professional certification of competence.",
+  "assessments": [
+    {
+      "skill": "Python",
+      "title": "Python Fundamentals",
+      "description": "Core syntax, built-in types, functions and error handling.",
+      "difficulty": "beginner",
+      "pass_score": 60,
+      "questions": [
+        { "question": "What is the output of len('SkillBridge')?", "options": ["10", "11", "12", "Error"], "correct_answer": "11", "explanation": "'SkillBridge' has 11 characters, and len() on a string returns its character count." },
+        { "question": "Which type does 7 / 2 evaluate to in Python 3?", "options": ["3", "3.5", "4", "TypeError"], "correct_answer": "3.5", "explanation": "The / operator always performs true division and returns a float, so 7 / 2 is 3.5." },
+        { "question": "Which of these creates a dictionary?", "options": ["[1, 2, 3]", "{'a': 1}", "(1, 2)", "{1, 2, 3}"], "correct_answer": "{'a': 1}", "explanation": "Curly braces with key: value pairs create a dict; {1, 2, 3} would create a set." },
+        { "question": "What is the result of bool([]) ?", "options": ["True", "False", "None", "TypeError"], "correct_answer": "False", "explanation": "Empty containers are falsy in Python, so bool([]) is False." },
+        { "question": "Which keyword defines an anonymous function?", "options": ["def", "lambda", "func", "fn"], "correct_answer": "lambda", "explanation": "lambda creates a small anonymous function inline, e.g. lambda x: x + 1." },
+        { "question": "What does a try/except block do?", "options": ["Repeats a loop", "Handles exceptions that occur in the try block", "Defines a new class", "Imports a module"], "correct_answer": "Handles exceptions that occur in the try block", "explanation": "try/except catches exceptions raised during execution of the try block so the program can recover." },
+        { "question": "What is the value of 'abc'.upper()?", "options": ["'ABC'", "'abc'", "'Abc'", "Error"], "correct_answer": "'ABC'", "explanation": ".upper() returns a new string with all characters in upper case; strings are immutable." },
+        { "question": "Which statement about tuples is correct?", "options": ["Tuples are mutable", "Tuples cannot be indexed", "Tuples are immutable", "Tuples cannot be nested"], "correct_answer": "Tuples are immutable", "explanation": "A tuple cannot be changed after creation, unlike a list." },
+        { "question": "What does range(3) produce when iterated?", "options": ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "3, 2, 1"], "correct_answer": "0, 1, 2", "explanation": "range(3) starts at 0 and stops before 3, yielding 0, 1, 2." },
+        { "question": "Which syntax correctly opens a file and guarantees it is closed?", "options": ["open('f.txt')", "with open('f.txt') as f:", "f = file('f.txt')", "read('f.txt')"], "correct_answer": "with open('f.txt') as f:", "explanation": "The with statement acts as a context manager and closes the file even if an error occurs." }
+      ]
+    },
+    {
+      "skill": "JavaScript",
+      "title": "JavaScript Essentials",
+      "description": "Types, scope, arrays, functions and asynchronous behaviour.",
+      "difficulty": "beginner",
+      "pass_score": 60,
+      "questions": [
+        { "question": "Which keyword declares a block-scoped variable that cannot be reassigned?", "options": ["var", "let", "const", "static"], "correct_answer": "const", "explanation": "const declares a block-scoped binding that cannot be reassigned (though object contents can still change)." },
+        { "question": "What does typeof '5' return?", "options": ["'number'", "'string'", "'boolean'", "'object'"], "correct_answer": "'string'", "explanation": "typeof reports the type of the value; '5' is a string literal." },
+        { "question": "What does [1, 2, 3].map(n => n * 2) return?", "options": ["[2, 4, 6]", "[1, 2, 3]", "6", "Error"], "correct_answer": "[2, 4, 6]", "explanation": "map returns a new array containing the result of the callback for each element." },
+        { "question": "What is the result of 1 == '1' ?", "options": ["true", "false", "TypeError", "undefined"], "correct_answer": "true", "explanation": "== performs type coercion, so '1' is converted to 1. === would compare without coercion and give false." },
+        { "question": "Which method removes the last element from an array?", "options": ["shift()", "pop()", "slice()", "splice()"], "correct_answer": "pop()", "explanation": "pop() removes and returns the final element; shift() removes from the front." },
+        { "question": "What does a Promise represent?", "options": ["A synchronous value", "An eventual result of an asynchronous operation", "A CSS property", "A data type for numbers"], "correct_answer": "An eventual result of an asynchronous operation", "explanation": "A Promise settles to either a resolved value or a rejection reason in the future." },
+        { "question": "Which declaration creates a function?", "options": ["function greet() {}", "func greet() {}", "def greet() {}", "let greet = function() {} only"], "correct_answer": "function greet() {}", "explanation": "function declarations use the function keyword. Function expressions assigned to variables are also valid." },
+        { "question": "What does JSON.parse('{\"a\":1}') return?", "options": ["A string", "An object with property a", "An array", "undefined"], "correct_answer": "An object with property a", "explanation": "JSON.parse converts a JSON string into a JavaScript value, here an object." },
+        { "question": "What is the value of undefined ne null ?", "options": ["true", "false", "TypeError", "ReferenceError"], "correct_answer": "false", "explanation": "undefined and null are loosely equal, so undefined == null is true (undefined === null is false)." },
+        { "question": "How do you refer to the object a method was called on in an arrow function?", "options": ["You cannot; arrow functions do not bind their own 'this'", "Using this", "Using self", "Using arguments"], "correct_answer": "You cannot; arrow functions do not bind their own 'this'", "explanation": "Arrow functions capture 'this' lexically from the enclosing scope rather than binding their own." }
+      ]
+    },
+    {
+      "skill": "React",
+      "title": "React Fundamentals",
+      "description": "Components, props, state, hooks and rendering behaviour.",
+      "difficulty": "beginner",
+      "pass_score": 60,
+      "questions": [
+        { "question": "What is JSX?", "options": ["A database query language", "A syntax extension that looks like HTML inside JavaScript", "A CSS preprocessor", "A state management library"], "correct_answer": "A syntax extension that looks like HTML inside JavaScript", "explanation": "JSX is compiled into function calls that create React elements." },
+        { "question": "Which hook adds local state to a function component?", "options": ["useEffect", "useState", "useContext", "useRef"], "correct_answer": "useState", "explanation": "useState returns the current value and a setter that triggers a re-render." },
+        { "question": "What is the purpose of the dependency array in useEffect?", "options": ["It lists props", "It controls when the effect re-runs", "It sets initial state", "It defines CSS classes"], "correct_answer": "It controls when the effect re-runs", "explanation": "The effect re-runs when any listed dependency changes; an empty array runs it once after mount." },
+        { "question": "How is data passed from a parent to a child component?", "options": ["Through props", "Through component state", "Through the DOM", "Through CSS variables"], "correct_answer": "Through props", "explanation": "Props are read-only inputs a parent passes down to a child." },
+        { "question": "Why does React need a 'key' prop when rendering a list?", "options": ["For CSS styling", "For alphabetical sorting", "To identify which items changed, were added or removed", "To make items clickable"], "correct_answer": "To identify which items changed, were added or removed", "explanation": "Keys let React reconcile lists efficiently and preserve element state correctly." },
+        { "question": "What does the useEffect cleanup function do?", "options": ["Deletes the component", "Runs before the effect re-runs or the component unmounts", "Resets all state", "Unmounts child components"], "correct_answer": "Runs before the effect re-runs or the component unmounts", "explanation": "The returned function releases resources such as subscriptions and timers." },
+        { "question": "Which statement about props is correct?", "options": ["Props are mutable inside the child", "Props are read-only", "Props can only be strings", "Props bypass React"], "correct_answer": "Props are read-only", "explanation": "A child must not mutate its props; it communicates upward using callbacks." },
+        { "question": "When does a component re-render?", "options": ["Only on page reload", "When its state or props change", "Only when its parent mounts", "Every second automatically"], "correct_answer": "When its state or props change", "explanation": "React schedules a re-render when state or props change, or when a parent re-renders." },
+        { "question": "What is the best way to share state between distant components?", "options": ["Global variables", "Lifting state up or using context", "Direct DOM manipulation", "Writing to localStorage only"], "correct_answer": "Lifting state up or using context", "explanation": "Lifting state to a common ancestor or using context keeps data flow explicit and predictable." },
+        { "question": "What is a controlled input?", "options": ["An input whose value is driven by React state", "An input with no value", "A disabled input", "An input styled with CSS"], "correct_answer": "An input whose value is driven by React state", "explanation": "Its value comes from state and updates via onChange, making React the single source of truth." }
+      ]
+    },
+    {
+      "skill": "SQL",
+      "title": "SQL and Relational Queries",
+      "description": "SELECT, joins, aggregation, constraints and indexing.",
+      "difficulty": "beginner",
+      "pass_score": 60,
+      "questions": [
+        { "question": "Which clause filters rows before grouping?", "options": ["HAVING", "WHERE", "ORDER BY", "GROUP BY"], "correct_answer": "WHERE", "explanation": "WHERE filters individual rows before aggregation; HAVING filters after grouping." },
+        { "question": "What does an INNER JOIN return?", "options": ["All rows from the left table", "Only rows with a match in both tables", "All rows from both tables", "Only unmatched rows"], "correct_answer": "Only rows with a match in both tables", "explanation": "INNER JOIN keeps only the rows where the join condition matches in both tables." },
+        { "question": "Which statement removes all rows but keeps the table structure?", "options": ["DROP TABLE", "DELETE FROM t", "TRUNCATE TABLE t", "ALTER TABLE t"], "correct_answer": "TRUNCATE TABLE t", "explanation": "TRUNCATE removes all rows quickly and keeps the table; DROP removes the table itself." },
+        { "question": "What is a primary key?", "options": ["A column that may contain duplicates", "A column or set of columns uniquely identifying each row", "A foreign reference", "An index of all columns"], "correct_answer": "A column or set of columns uniquely identifying each row", "explanation": "A primary key enforces uniqueness and is never null." },
+        { "question": "Which function counts non-null values in a column?", "options": ["SUM()", "COUNT()", "AVG()", "MAX()"], "correct_answer": "COUNT()", "explanation": "COUNT(column) counts non-null values; COUNT(*) counts rows." },
+        { "question": "What does a foreign key enforce?", "options": ["Uniqueness within a table", "That a value references an existing row in another table", "That a column is indexed", "That a column is sorted"], "correct_answer": "That a value references an existing row in another table", "explanation": "Referential integrity prevents orphaned references to rows that do not exist." },
+        { "question": "Which index structure does PostgreSQL create by default?", "options": ["Hash", "B-tree", "GIN", "Bitmap"], "correct_answer": "B-tree", "explanation": "PostgreSQL defaults to B-tree indexes, which support equality and range queries." },
+        { "question": "What is normalization primarily for?", "options": ["Speeding up all queries", "Reducing data redundancy and update anomalies", "Encrypting data", "Backing up data"], "correct_answer": "Reducing data redundancy and update anomalies", "explanation": "Normal forms remove duplicated data so a single change is recorded in one place." },
+        { "question": "Which JOIN returns all left rows plus matches from the right?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "CROSS JOIN"], "correct_answer": "LEFT JOIN", "explanation": "LEFT JOIN preserves every left row, filling unmatched right columns with NULL." },
+        { "question": "What does LIMIT 10 do combined with ORDER BY score DESC?", "options": ["Returns the 10 lowest scores", "Returns the 10 highest scores", "Returns any 10 rows", "Removes 10 rows"], "correct_answer": "Returns the 10 highest scores", "explanation": "ORDER BY sorts descending and LIMIT keeps the first 10 rows of that order." }
+      ]
+    },
+    {
+      "skill": "Git",
+      "title": "Git and Version Control",
+      "description": "Commits, branches, merging and collaboration workflow.",
+      "difficulty": "beginner",
+      "pass_score": 60,
+      "questions": [
+        { "question": "Which command records staged changes as a new commit?", "options": ["git add", "git commit", "git push", "git status"], "correct_answer": "git commit", "explanation": "git commit creates a snapshot of the currently staged changes." },
+        { "question": "What does git clone do?", "options": ["Creates a branch", "Copies a remote repository locally with its history", "Deletes a repository", "Uploads local commits"], "correct_answer": "Copies a remote repository locally with its history", "explanation": "git clone downloads the repository and checks out the default branch." },
+        { "question": "What is a merge conflict?", "options": ["Two people committing at once", "When Git cannot automatically combine overlapping changes", "A failed push", "A missing remote"], "correct_answer": "When Git cannot automatically combine overlapping changes", "explanation": "Git marks the conflicting regions and requires a human to choose the correct result." },
+        { "question": "Which command shows the commit history?", "options": ["git log", "git history", "git status", "git show-all"], "correct_answer": "git log", "explanation": "git log lists commits in reverse chronological order." },
+        { "question": "What does git pull do?", "options": ["Fetches remote changes and merges them into the current branch", "Uploads changes", "Creates a repository", "Deletes a branch"], "correct_answer": "Fetches remote changes and merges them into the current branch", "explanation": "git pull is fetch followed by merge (or rebase, if configured)." },
+        { "question": "What is a branch in Git?", "options": ["A copy of the whole repository", "A movable pointer to a commit", "A backup file", "A remote server"], "correct_answer": "A movable pointer to a commit", "explanation": "Branches are lightweight pointers, which is why switching is fast." },
+        { "question": "Which file lists paths Git should ignore?", "options": [".gitconfig", ".gitignore", ".gitkeep", "git.ignore"], "correct_answer": ".gitignore", "explanation": "Patterns in .gitignore exclude files such as build output and secrets from tracking." },
+        { "question": "What does git stash do?", "options": ["Deletes changes", "Temporarily shelves uncommitted changes", "Creates a commit", "Pushes to remote"], "correct_answer": "Temporarily shelves uncommitted changes", "explanation": "stash saves work in progress so you can switch context, then restore it later." },
+        { "question": "What is the purpose of a pull request?", "options": ["To merge code without review", "To propose and review changes before merging", "To delete a branch", "To run tests only"], "correct_answer": "To propose and review changes before merging", "explanation": "A pull request enables review, discussion and checks before changes land on the target branch." },
+        { "question": "Which command creates and switches to a new branch?", "options": ["git branch new", "git checkout -b new", "git merge new", "git remote add new"], "correct_answer": "git checkout -b new", "explanation": "The -b flag creates the branch and checks it out in one step (git switch -c also works)." }
+      ]
+    },
+    {
+      "skill": "Docker",
+      "title": "Docker Containers",
+      "description": "Images, containers, volumes, networking and Compose.",
+      "difficulty": "intermediate",
+      "pass_score": 60,
+      "questions": [
+        { "question": "What is the difference between an image and a container?", "options": ["They are the same thing", "An image is a template; a container is a running instance of it", "A container is stored on disk; an image runs", "Images are always smaller"], "correct_answer": "An image is a template; a container is a running instance of it", "explanation": "A container adds a writable layer on top of an immutable image." },
+        { "question": "Which instruction sets the base image in a Dockerfile?", "options": ["BASE", "FROM", "IMAGE", "RUN"], "correct_answer": "FROM", "explanation": "FROM must be the first instruction (after comments and ARG) and defines the starting image." },
+        { "question": "What is the purpose of a volume?", "options": ["To persist data outside the container lifecycle", "To speed up the build", "To expose ports", "To install packages"], "correct_answer": "To persist data outside the container lifecycle", "explanation": "Data written to a volume survives container removal and rebuilds." },
+        { "question": "What does EXPOSE 8000 in a Dockerfile do?", "options": ["Publishes the port to the host", "Documents the port the container listens on", "Blocks other ports", "Opens a firewall"], "correct_answer": "Documents the port the container listens on", "explanation": "EXPOSE is documentation; publishing requires -p or the ports key in Compose." },
+        { "question": "Why copy requirements.txt before the application source?", "options": ["It is required by Docker", "So the dependency layer is cached and reused when only source changes", "To reduce image size", "To set permissions"], "correct_answer": "So the dependency layer is cached and reused when only source changes", "explanation": "Docker caches layers; keeping dependencies in an earlier layer avoids reinstalling them on every code edit." },
+        { "question": "What does docker compose do?", "options": ["Builds a single image", "Defines and runs multi-container applications", "Replaces Docker entirely", "Only pushes images"], "correct_answer": "Defines and runs multi-container applications", "explanation": "Compose describes services, networks and volumes in YAML and manages their lifecycle together." },
+        { "question": "What is the CMD instruction for?", "options": ["Setting environment variables", "Providing the default command a container runs", "Copying files", "Defining the working directory"], "correct_answer": "Providing the default command a container runs", "explanation": "CMD sets the default executable and arguments, which can be overridden at run time." },
+        { "question": "What does ADD or COPY do?", "options": ["Starts the container", "Copies files into the image", "Sets the user", "Exposes a port"], "correct_answer": "Copies files into the image", "explanation": "COPY copies from the build context; ADD additionally handles URLs and archives." },
+        { "question": "A container can reach another by name in Compose. Why?", "options": ["Docker installs DNS servers", "Compose provides service-name DNS on a shared network", "It uses the host file", "Ports are hardcoded"], "correct_answer": "Compose provides service-name DNS on a shared network", "explanation": "Services on the same Compose network resolve each other by service name." },
+        { "question": "What is a multi-stage build used for?", "options": ["Running multiple containers", "Keeping the final image small by discarding build-only tooling", "Parallel builds", "Multi-architecture images only"], "correct_answer": "Keeping the final image small by discarding build-only tooling", "explanation": "Each FROM begins a stage; only the artefacts needed at runtime are copied into the final stage." }
+      ]
+    },
+    {
+      "skill": "Machine Learning",
+      "title": "Machine Learning Foundations",
+      "description": "Supervised learning, evaluation, overfitting and data splitting.",
+      "difficulty": "intermediate",
+      "pass_score": 60,
+      "questions": [
+        { "question": "What is supervised learning?", "options": ["Learning from labelled examples", "Clustering unlabelled data", "Tuning hyperparameters only", "Storing data in a database"], "correct_answer": "Learning from labelled examples", "explanation": "Supervised models learn a mapping from inputs to known target labels." },
+        { "question": "What is overfitting?", "options": ["The model performs well on training data but poorly on unseen data", "The model is too simple", "The dataset is too large", "Training takes too long"], "correct_answer": "The model performs well on training data but poorly on unseen data", "explanation": "The model has memorised noise specific to the training set rather than the underlying pattern." },
+        { "question": "Why is a test set kept separate from training data?", "options": ["To speed up training", "To estimate performance on unseen data", "To reduce file size", "It is not necessary"], "correct_answer": "To estimate performance on unseen data", "explanation": "Evaluating on data the model never trained on gives an honest performance estimate." },
+        { "question": "Which metric suits a heavily imbalanced binary classification?", "options": ["Accuracy", "Precision, recall or F1", "Mean squared error", "R-squared"], "correct_answer": "Precision, recall or F1", "explanation": "With rare positives, accuracy is misleading because predicting the majority class scores highly." },
+        { "question": "What does cross-validation provide?", "options": ["A single random score", "A more reliable performance estimate across multiple splits", "Faster training", "Guaranteed accuracy"], "correct_answer": "A more reliable performance estimate across multiple splits", "explanation": "k-fold cross-validation averages results over k train/validation splits, reducing variance of the estimate." },
+        { "question": "What is the purpose of a validation set?", "options": ["Final reporting", "Tuning hyperparameters and model selection", "Deployment", "Data cleaning"], "correct_answer": "Tuning hyperparameters and model selection", "explanation": "The validation set guides choices; the test set is reserved for the final unbiased estimate." },
+        { "question": "Which is a regression task?", "options": ["Predicting whether an email is spam", "Predicting a house price", "Grouping customers into segments", "Recognising a digit class"], "correct_answer": "Predicting a house price", "explanation": "Regression predicts a continuous value, unlike classification which predicts a category." },
+        { "question": "What does regularisation do?", "options": ["Increases model complexity", "Penalises complexity to reduce overfitting", "Removes missing values", "Speeds up inference"], "correct_answer": "Penalises complexity to reduce overfitting", "explanation": "L1/L2 penalties discourage large coefficients, improving generalisation." },
+        { "question": "What is data leakage?", "options": ["Slow network transfer", "Information from the test set influencing training", "Missing values", "A large dataset"], "correct_answer": "Information from the test set influencing training", "explanation": "Leakage produces optimistic results that do not hold in production, e.g. scaling before splitting." },
+        { "question": "Which is an unsupervised task?", "options": ["Predicting a label", "Clustering similar records", "Classifying images", "Forecasting a price"], "correct_answer": "Clustering similar records", "explanation": "Clustering finds structure without target labels, so it is unsupervised." }
+      ]
+    }
+  ]
+}
