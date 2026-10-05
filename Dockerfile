@@ -18,14 +18,14 @@ RUN pip install --upgrade pip && pip install -r requirements-dev.txt
 # Install spaCy model
 RUN python -m spacy download en_core_web_sm
 
-# Copy backend code to /app/backend
+# Copy everything to /app
 COPY backend/ /app/backend/
-
-# Copy data files to both locations the app might look
-COPY data/ /data/
 COPY data/ /app/backend/data/
 
 WORKDIR /app/backend
+
+# Verify data files exist
+RUN ls -la /app/backend/data/skills/
 
 EXPOSE 8000
 
