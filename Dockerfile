@@ -21,8 +21,6 @@ COPY data/ /data/
 
 WORKDIR /app/backend
 
-RUN chmod +x start.sh
-
 EXPOSE 8000
 
-CMD ["./start.sh"]
+CMD ["sh", "./start.sh"]
