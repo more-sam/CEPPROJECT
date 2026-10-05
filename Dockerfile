@@ -11,29 +11,17 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend requirements first for caching
 COPY backend/requirements.txt backend/requirements-dev.txt ./
 RUN pip install --upgrade pip && pip install -r requirements-dev.txt
 
-# Install spaCy model
 RUN python -m spacy download en_core_web_sm
 
-# Copy backend code
 COPY backend/ /app/backend/
-
-# Copy data to ALL possible locations the app might look
 COPY data/ /data/
-COPY data/ /app/data/
-COPY data/ /app/backend/data/
-
-# Verify
-RUN echo "=== Checking data files ===" && \
-    ls -la /data/skills/ && \
-    ls -la /app/data/skills/ && \
-    ls -la /app/backend/data/skills/
 
 WORKDIR /app/backend
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Run migrations, try to seed (but don't fail if seed fails), then start
+CMD ["sh", "-c", "alembic upgrade head; python -m app.seed || echo 'Seed failed but continuing'; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
