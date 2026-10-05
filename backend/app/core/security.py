@@ -93,15 +93,18 @@ def decode_access_token(token: str) -> int | None:
 # ---------------------------------------------------------------------------
 def set_auth_cookie(response: Response, token: str) -> None:
     """Attach the access token as an httpOnly cookie."""
+    # SameSite=None is required when frontend and API are on different domains
+    # (e.g. skillbridge-frontend.onrender.com vs skillbridge-api.onrender.com).
+    # Lax blocks cross-site requests, which breaks auth on separate subdomains.
     response.set_cookie(
         key=AUTH_COOKIE_NAME,
         value=token,
-        httponly=True,          # not readable from JavaScript
-        samesite="lax",         # blocks cross-site POSTs (CSRF mitigation)
+        httponly=True,
+        samesite="none" if settings.cookie_secure else "lax",
         secure=settings.cookie_secure,
         max_age=settings.access_token_expire_minutes * 60,
         path="/",
-        domain=None,            # no domain constraint - works for localhost, 127.0.0.1, etc.
+        domain=None,
     )
 
 
@@ -110,7 +113,7 @@ def clear_auth_cookie(response: Response) -> None:
     response.delete_cookie(
         key=AUTH_COOKIE_NAME,
         httponly=True,
-        samesite="lax",
+        samesite="none" if settings.cookie_secure else "lax",
         secure=settings.cookie_secure,
         path="/",
     )
