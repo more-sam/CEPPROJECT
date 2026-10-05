@@ -21,8 +21,6 @@ COPY data/ /data/
 
 WORKDIR /app/backend
 
-RUN chmod +x start.sh
-
 EXPOSE 8000
 
-CMD ["./start.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
